@@ -1,0 +1,43 @@
+{
+  "nullable": false,
+  "description": "模型",
+  "example": "Object类型数据",
+  "type": "object",
+  "properties": {
+    "name": {
+      "nullable": false,
+      "type": "string"
+    },
+    "age": {
+      "nullable": false,
+      "type": "number"
+    },
+    "address": {
+      "nullable": false,
+      "type":"object",
+      "properties": {
+        "country": {
+          "type": "string",
+          "nullable": false
+        },
+        "provide": {
+          "type": "string",
+          "nullable": false
+        },
+        "number": {
+          "nullable":false,
+          "type": "number",
+          "format": "int32"
+        }
+      }
+    },
+    "adult": {
+      "type": "boolean",
+      "nullable": true
+    },
+    "school": {
+      "type": "array",
+      "nullable":false
+    }
+  }
+}

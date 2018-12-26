@@ -1,0 +1,61 @@
+.layout {
+  min-height: 100%;
+  min-width: 1280px;
+
+  &-header {
+    background-color: #fff;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &-logo {
+      height: 48px;
+      line-height: 48px;
+
+      font-size: 24px;
+      font-family: PingFangSC-Semibold;
+      color: #475669;
+    }
+  }
+
+  &-content {
+    padding: 0 32px;
+    background: #f9fafb;
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    flex-basis: 100%;
+
+    .app-container {
+      height: 100%;
+      flex: 100% 1 1;
+      display: flex;
+      flex-direction: column;
+      .loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+  &-footer {
+    display: inline-flex;
+    margin: 0 auto;
+    align-items: center;
+    &-logo {
+      width: 40px;
+      height: 40px;
+      background-image: url('../../assets//footer-logo.png');
+      background-size: cover;
+      margin-right: 16px;
+    }
+    &-text {
+      display: inline-flex;
+      flex-direction: column;
+      font-size: 10px;
+    }
+  }
+}

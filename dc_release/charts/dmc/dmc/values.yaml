@@ -1,0 +1,1039 @@
+# Default values for dmc.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ing:
+  userPath: /dmc/user/
+  apimPath: /dmc/apim/
+  proxyPath: /dmc/proxy/
+  uiPath: /dmc
+  apiRunnerPath: /dmc/runner/
+
+ui:
+  replicaCount: 1
+
+  image:
+    repository: 10.196.109.214:5000/dmc-fe
+    tag: 0.1
+    pullPolicy: Always
+
+  container:
+    port: 80
+
+  service:
+    type: ClusterIP
+    port: 9000
+
+# =============================================================================
+# dmc-user configuration
+# =============================================================================
+user-api:
+  replicaCount: 1
+
+  image:
+    repository: 10.196.109.214:5000/dmc-user
+    tag: 0.1
+    pullPolicy: Always
+
+  container:
+    appJar: /app.jar
+    config:
+      path: /app/config
+    probePath: v2/api-docs
+
+  service:
+    type: ClusterIP
+    port: 9001
+
+  config:
+    logging:
+      level:
+        ROOT: INFO
+        com.zhuxun: TRACE
+
+    spring:
+      jackson:
+        serialization.indent_output: true
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://awesome-dmc-mysql:3306/dmc_user?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong
+        username: root
+        password: testing
+
+    server:
+      port: 80
+      servlet:
+        context-path: /
+
+    application:
+      security:
+        authentication:
+          jwt:
+            secret: secret
+            tokenValidityInSeconds: 86400
+            tokenValidityInSecondsForRememberMe: 864000
+      swagger:
+        title: 'DMC 用户相关接口'
+        description: '用户接口'
+        version: '0.1'
+        basePath: '/dmc/user/'
+      cors:
+        allowCredentials: true
+        allowedOrigins: ['*']
+        allowedMethods: ['*']
+        allowedHeaders: ['*']
+# =============================================================================
+# dmc-apim configuration
+# =============================================================================
+apim-api:
+  replicaCount: 1
+
+  image:
+    repository: 10.196.109.214:5000/dmc-apim
+    tag: 0.1
+    pullPolicy: Always
+
+  container:
+    appJar: /app.jar
+    config:
+      path: /app/config
+    probePath: v2/api-docs
+
+  service:
+    type: ClusterIP
+    port: 9002
+
+  config:
+    logging:
+      level:
+        ROOT: INFO
+        com.zhuxun: TRACE
+
+    spring:
+      jackson:
+        serialization.indent_output: true
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://awesome-dmc-mysql:3306/dmc_api?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong
+        username: root
+        password: testing
+
+    server:
+      port: 80
+      servlet:
+        context-path: /
+
+    application:
+      managedDatasource:
+        dsConfigDir: /app/ds-config
+      security:
+        authentication:
+          jwt:
+            secret: secret
+            tokenValidityInSeconds: 86400
+            tokenValidityInSecondsForRememberMe: 864000
+        tokenAuthentication:
+          jwt:
+            secret: secret
+            tokenValidityInSeconds: 36000
+            tokenValidityInSecondsForRememberMe: 360000
+      swagger:
+        title: 'DMC 接口管理相关接口'
+        description: '接口管理接口'
+        version: '0.1'
+        basePath: '/dmc/apim/'
+      cors:
+        allowCredentials: true
+        allowedOrigins: ['*']
+        allowedMethods: ['*']
+        allowedHeaders: ['*']
+      proxyServer:
+        host: 'http://221.226.86.39/dmc'
+        generateApiPrefix: '/runner/api/'
+        proxyApiPrefix: '/proxy/api/extra/'
+
+  catalog:
+    dmc_api.properties: |
+      connector.name=mysql
+      connection-url=jdbc:mysql://awesome-dmc-mysql:3306/dmc_api
+      connection-user=root
+      connection-password=testing
+# =============================================================================
+# dmc-api-runner configuration
+# =============================================================================
+api-runner:
+  replicaCount: 1
+
+  image:
+    repository: 10.196.109.214:5000/dmc-api-runner
+    tag: 0.1
+    pullPolicy: Always
+
+  container:
+    appJar: /app.jar
+    config:
+      path: /app/config
+    probePath: v2/api-docs
+
+  service:
+    type: ClusterIP
+    port: 9002
+
+  config:
+    logging:
+      level:
+        ROOT: INFO
+        com.zhuxun: TRACE
+
+    spring:
+      jackson:
+        serialization.indent_output: true
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://awesome-dmc-mysql:3306/dmc_api?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong
+        username: root
+        password: testing
+
+    server:
+      port: 80
+      servlet:
+        context-path: /
+
+    application:
+      managedDatasource:
+        dsConfigDir: /app/ds-config
+      security:
+        authentication:
+          jwt:
+            secret: secret
+            tokenValidityInSeconds: 3600
+            tokenValidityInSecondsForRememberMe: 360000
+        tokenAuthentication:
+          jwt:
+            secret: secret
+            tokenValidityInSeconds: 600
+            tokenValidityInSecondsForRememberMe: 360000
+      swagger:
+        title: 'DMC 接口管理相关接口'
+        description: '接口管理接口'
+        version: '0.1'
+        basePath: '/dmc/apim/'
+      cors:
+        allowCredentials: true
+        allowedOrigins: ['*']
+        allowedMethods: ['*']
+        allowedHeaders: ['*']
+
+  catalog:
+    dmc_api.properties: |
+      connector.name=mysql
+      connection-url=jdbc:mysql://awesome-dmc-mysql:3306/dmc_api
+      connection-user=root
+      connection-password=testing
+# =============================================================================
+# dmc-proxy configuration
+# =============================================================================
+proxy:
+  replicaCount: 1
+
+  image:
+    repository: 10.196.109.214:5000/dmc-proxy
+    tag: 0.1
+    pullPolicy: Always
+
+  container:
+    appJar: /app.jar
+    config:
+      path: /app/config
+    probePath: v2/api-docs
+
+  service:
+    type: ClusterIP
+    port: 9003
+
+  config:
+    logging:
+      level:
+        ROOT: INFO
+        com.zhuxun: TRACE
+    spring:
+      profiles:
+        active: dev
+        include: swagger
+      jackson:
+        serialization.indent_output: true
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://awesome-dmc-mysql:3306/dmc_api?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong
+        username: root
+        password: testing
+
+    server:
+      port: 80
+      servlet:
+        context-path: /
+
+    application:
+      security:
+        authentication:
+          jwt:
+            secret: secret
+            tokenValidityInSeconds: 3600
+            tokenValidityInSecondsForRememberMe: 360000
+      cors:
+        allowCredentials: true
+        allowedOrigins: ['*']
+        allowedMethods: ['*']
+        allowedHeaders: ['*']
+    zuul:
+      host:
+        connect-timeout-millis: 20000
+        socket-timeout-millis: 20000
+# =============================================================================
+# presto configuration
+# =============================================================================
+presto:
+  server:
+    workers: 2
+    node:
+      environment: production
+      dataDir: /presto/etc/data
+    log:
+      presto:
+        level: INFO
+    config:
+      path: /etc/presto
+      http:
+        port: 8080
+      query:
+        maxMemory: "4GB"
+        maxMemoryPerNode: "1GB"
+    jvm:
+      maxHeapSize: "8G"
+      gcMethod:
+        type: "UseG1GC"
+        g1:
+          heapRegionSize: "32M"
+  
+  image:
+    repository: 10.196.109.214:5000/bivas/presto
+    tag: 0.196
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+
+# =============================================================================
+# MySQL configuration
+# =============================================================================
+mysql:
+  image: "10.196.109.214:5000/mysql"
+  imageTag: "5.7.14"
+  mysqlRootPassword: testing
+  imagePullPolicy: IfNotPresent
+
+  nodeSelector: {}
+
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3
+
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+  persistence:
+    enabled: false
+    accessMode: ReadWriteOnce
+    size: 8Gi
+
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+  configurationFiles:
+
+  service:
+    type: ClusterIP
+    port: 3306
+
+  ssl:
+    enabled: false
+    secret: mysql-ssl-certs
+    certificates:
+
+  initializationFiles:
+    init_dmc_user.sql: |-
+      create database dmc_user default character set utf8mb4 collate utf8mb4_unicode_ci;
+      USE dmc_user;
+
+      CREATE TABLE `sec_permission` (
+        `id`              VARCHAR(36)  NOT NULL,
+        `create_datetime` DATETIME     NOT NULL         DEFAULT NOW(),
+        `modify_datetime` DATETIME     NOT NULL         DEFAULT NOW() ON UPDATE NOW(),
+        `permission`      VARCHAR(255) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `sec_permission__indexes` (`permission`) USING BTREE
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8mb4
+        COMMENT ='权限表';
+
+      CREATE TABLE `sec_role` (
+        `id`              VARCHAR(36) NOT NULL,
+        `create_datetime` DATETIME    NOT NULL         DEFAULT NOW(),
+        `modify_datetime` DATETIME    NOT NULL         DEFAULT NOW() ON UPDATE NOW(),
+        `role`            VARCHAR(36) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `sec_role__indexes` (`role`) USING BTREE
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8mb4
+        COMMENT ='角色表';
+
+      CREATE TABLE `sec_rolepermission` (
+        `id`              VARCHAR(36) NOT NULL,
+        `create_datetime` DATETIME    NOT NULL         DEFAULT NOW(),
+        `modify_datetime` DATETIME    NOT NULL         DEFAULT NOW() ON UPDATE NOW(),
+        `role_id`         VARCHAR(36) NOT NULL,
+        `permission_id`   VARCHAR(36) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `sec_rolepermission__indexes` (`role_id`, `permission_id`) USING BTREE
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8mb4
+        COMMENT ='角色权限表';
+
+      CREATE TABLE `sec_user` (
+        `id`              VARCHAR(36)  NOT NULL,
+        `create_datetime` DATETIME     NOT NULL  DEFAULT NOW(),
+        `modify_datetime` DATETIME     NOT NULL  DEFAULT NOW() ON UPDATE NOW(),
+        `username`        VARCHAR(36)  NOT NULL,
+        `password`        VARCHAR(254) NOT NULL,
+        `passsalt`        VARCHAR(254) NOT NULL,
+        `status`          TINYINT(1)             DEFAULT 1,
+        PRIMARY KEY (`id`),
+        KEY `sec_user__indexes` (`username`, `password`, `passsalt`) USING BTREE
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8mb4
+        COMMENT ='用户表';
+
+      CREATE TABLE `sec_userpermission` (
+        `id`              VARCHAR(36) NOT NULL,
+        `create_datetime` DATETIME    NOT NULL DEFAULT NOW(),
+        `modify_datetime` DATETIME             DEFAULT NOW() ON UPDATE NOW(),
+        `user_id`         VARCHAR(36) NOT NULL,
+        `permission_id`   VARCHAR(36) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `sec_userpermission__indexes` (`user_id`, `permission_id`) USING BTREE
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8mb4
+        COMMENT ='用户权限表';
+
+      CREATE TABLE `sec_userrole` (
+        `id`              VARCHAR(36) NOT NULL,
+        `create_datetime` DATETIME    NOT NULL DEFAULT NOW(),
+        `modify_datetime` DATETIME             DEFAULT NOW() ON UPDATE NOW(),
+        `user_id`         VARCHAR(36) NOT NULL,
+        `role_id`         VARCHAR(36) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `sec_userrole__indexes` (`user_id`, `role_id`) USING BTREE
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8mb4
+        COMMENT ='用户角色表';
+
+      ALTER TABLE `sec_user`
+        ADD COLUMN `phone_number` VARCHAR(16) COMMENT '企业用户手机号码',
+        ADD COLUMN `business_license` VARCHAR(255) COMMENT '企业营业执照资料地址',
+        MODIFY COLUMN `status` VARCHAR(16) COMMENT '当前用户状态';        
+
+      INSERT INTO `sec_role`(`id`, `role`) VALUES
+        ('6EE0F98E-2F06-4974-B176-C72C9D925029', 'ADMIN'),
+        ('f7fc4beb-6fa3-47d0-8303-06c82b56a929', 'ACCOUNT'),
+        ('A56AD320-EF8F-46FC-873A-61765D15C8DF', 'CLIENT'),
+        ('FE4C6055-6C53-4151-B100-25262F849E9F', 'MANAGER');
+
+      INSERT INTO `sec_permission` (`id`, `permission`) VALUES
+        ('840F53DD-DAD9-4EE8-B909-8C39785F7D85', 'user:create'),
+        ('4A466354-82BA-4EA7-9CB2-C777D1BF4A6F', 'user:view'),
+        ('57BC950F-9FA6-4CFD-BA1D-1C559A364907', 'api:create'),
+        ('D6F7BF0B-02A4-4778-93E0-6FCA448444DF', 'api:view');
+
+      INSERT INTO `sec_rolepermission` (`id`, `role_id`, `permission_id`) VALUES
+        -- ADMIN: all permissions
+        ('BBD2CCE4-14BF-4206-A549-00A8EF634DD7', '6EE0F98E-2F06-4974-B176-C72C9D925029', '4A466354-82BA-4EA7-9CB2-C777D1BF4A6F'),
+        ('D4A2197F-9EAC-4992-8178-BF65B66E9034', '6EE0F98E-2F06-4974-B176-C72C9D925029', '4A466354-82BA-4EA7-9CB2-C777D1BF4A6F'),
+        ('35C7632D-9595-47DE-92D0-672C4527AD28', '6EE0F98E-2F06-4974-B176-C72C9D925029', '57BC950F-9FA6-4CFD-BA1D-1C559A364907'),
+        ('7CFFB990-B55E-4B3F-B9CD-B259EE48E9F0', '6EE0F98E-2F06-4974-B176-C72C9D925029', 'D6F7BF0B-02A4-4778-93E0-6FCA448444DF'),
+        -- MANAGER: user:view, api:create/view
+        ('804582E7-E4C0-43D1-A489-9D4BCA541D8A', 'FE4C6055-6C53-4151-B100-25262F849E9F', '4A466354-82BA-4EA7-9CB2-C777D1BF4A6F'),
+        ('1374C798-19B7-4798-BF93-C81C4F5A1434', 'FE4C6055-6C53-4151-B100-25262F849E9F', '57BC950F-9FA6-4CFD-BA1D-1C559A364907'),
+        ('0E4009D3-BE21-4723-9688-F3B138915D00', 'FE4C6055-6C53-4151-B100-25262F849E9F', 'D6F7BF0B-02A4-4778-93E0-6FCA448444DF'),
+        -- CLIENT: api:view
+        ('67E6D72F-9036-46D4-91CB-F022F59CE5BA', 'A56AD320-EF8F-46FC-873A-61765D15C8DF', 'D6F7BF0B-02A4-4778-93E0-6FCA448444DF');
+
+      INSERT INTO dmc_user.sec_user  VALUES ('69a9edb6-76f7-486f-8d4f-ce12de973363', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'admin', '123', '123', 'ALLOWABLE', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+      INSERT INTO dmc_user.sec_user  VALUES ('6e4e5a09-3a36-441d-8a04-b810ee17b3f9', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'account', '123', '123', 'ALLOWABLE', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+      INSERT INTO dmc_user.sec_user  VALUES ('6b81710b-5677-4743-b141-c6510c35593e', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'manager', '123', '123', 'ALLOWABLE', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+      INSERT INTO dmc_user.sec_user  VALUES ('6defc1a2-3724-4494-84d2-2ff347a212fd', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'qy1', '123', '123', 'ALLOWABLE', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+      INSERT INTO dmc_user.sec_user  VALUES ('98545636-db12-4f47-8463-75c847999dea', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'qy2', '123', '123', 'ALLOWABLE', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+      INSERT INTO dmc_user.sec_user  VALUES ('b8bf3580-a173-43dc-b163-f86829327ae1', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'qy3', '123', '123', 'ALLOWABLE', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+      INSERT INTO dmc_user.sec_user  VALUES ('02a4e4f2-17fa-4ddb-82f2-8102a4eda2dd', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'test1', '123', '123', 'CHECKED', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+      INSERT INTO dmc_user.sec_user  VALUES ('89ef6d9f-8124-4f40-897d-d13ac16c1cc5', '2018-07-16 09:20:47', '2018-07-16 09:24:41', 'test2', '123', '123', 'ABANDONED', '15556353237', 'http://imglf1.ph.126.net/AfkWJLHu3jfgTTxmfWfTYQ==/6630861057513359518.gif');
+
+      INSERT INTO `sec_userrole` (`id`, `user_id`, `role_id`) VALUES
+        ('ED44A950-2D8C-403E-88AA-E02858D26FAB', '69a9edb6-76f7-486f-8d4f-ce12de973363', '6EE0F98E-2F06-4974-B176-C72C9D925029'),
+        ('080E9737-BD09-4906-A3BF-0CD50D0F5AE2', '6b81710b-5677-4743-b141-c6510c35593e', 'FE4C6055-6C53-4151-B100-25262F849E9F'),
+        ('4694FB8D-936A-42DD-BADB-D720CFE16C68', '6defc1a2-3724-4494-84d2-2ff347a212fd', 'A56AD320-EF8F-46FC-873A-61765D15C8DF'),
+        ('B4D1B0E5-D389-40AF-B59B-832D7C9F85AF', '98545636-db12-4f47-8463-75c847999dea', 'A56AD320-EF8F-46FC-873A-61765D15C8DF'),
+        ('1234B0E5-D389-40AF-B59B-832D7C9F85AF', '6e4e5a09-3a36-441d-8a04-b810ee17b3f9', 'f7fc4beb-6fa3-47d0-8303-06c82b56a929'),
+        ('53429E1D-89C6-413C-ADAE-A3208B68100D', 'b8bf3580-a173-43dc-b163-f86829327ae1', 'A56AD320-EF8F-46FC-873A-61765D15C8DF'); 
+
+    init_dmc_api.sql: |-
+      create database dmc_api default character set utf8mb4 collate utf8mb4_unicode_ci;
+      USE dmc_api;
+
+      CREATE TABLE `dc_active_record` (
+        `id`              VARCHAR(36) NOT NULL
+        COMMENT '记录ID',
+        `path`            VARCHAR(255) DEFAULT NULL
+        COMMENT '请求路径',
+        `operation`       VARCHAR(8)   DEFAULT NULL
+        COMMENT '请求方式',
+        `info`            TEXT        NOT NULL
+        COMMENT '操作日志信息',
+        `access_datetime` DATETIME     DEFAULT CURRENT_TIMESTAMP
+        COMMENT '记录日期',
+        `access_userid`   VARCHAR(36)  DEFAULT NULL
+        COMMENT '访问用户ID',
+        `remark`          TEXT COMMENT '备注信息',
+        PRIMARY KEY (`id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='用户API权限变动记录表';
+
+      CREATE TABLE `dc_api` (
+        `id`              VARCHAR(36)  NOT NULL
+        COMMENT '接口资源ID',
+        `api_name`        VARCHAR(255) NOT NULL
+        COMMENT '接口名称',
+        `api_operation`   VARCHAR(16)  NOT NULL
+        COMMENT '接口请求方式',
+        `api_type`        VARCHAR(36)  NOT NULL
+        COMMENT '接口类型',
+        `api_protocol`    VARCHAR(8)   NOT NULL DEFAULT 'HTTP'
+        COMMENT '接口请求协议',
+        `api_path`        VARCHAR(512)          DEFAULT NULL
+        COMMENT '外部接口地址,内部请求时候为NULL',
+        `api_summary`     VARCHAR(512)          DEFAULT NULL
+        COMMENT '接口综述',
+        `project_id`      VARCHAR(36)  NOT NULL
+        COMMENT '所属项目ID',
+        `folder_id`       VARCHAR(36)           DEFAULT NULL
+        COMMENT '所属组别ID',
+        `create_datetime` DATETIME              DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME              DEFAULT CURRENT_TIMESTAMP
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36)  NOT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36)           DEFAULT NULL
+        COMMENT '修改人id',
+        `status`          TINYINT(4)            DEFAULT '1'
+        COMMENT '是否有效 默认有效',
+        PRIMARY KEY (`id`),
+        KEY `api_pro_index` (`project_id`),
+        KEY `api_folder_index` (`folder_id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='用户的API接口表';
+
+      CREATE TABLE `dc_api_doc` (
+        `id`              VARCHAR(36)                   NOT NULL,
+        `title`           VARCHAR(255) DEFAULT 'noName' NULL,
+        `content`         TEXT,
+        `content_type`    VARCHAR(32) DEFAULT NULL,
+        `create_userid`   VARCHAR(36) DEFAULT NULL,
+        `modify_userid`   VARCHAR(36) DEFAULT NULL,
+        `create_datetime` DATETIME    DEFAULT NULL,
+        `modify_datetime` DATETIME    DEFAULT NULL,
+        `status`          TINYINT(4)  DEFAULT NULL,
+        `api_id`          VARCHAR(36)                   NOT NULL,
+        PRIMARY KEY (`id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8;
+
+      CREATE TABLE `dc_api_impl` (
+        `id`              VARCHAR(36) NOT NULL
+        COMMENT 'API实现ID',
+        `api_id`          VARCHAR(36) NOT NULL
+        COMMENT 'api接口ID',
+        `api_impl`        TEXT        NOT NULL
+        COMMENT 'API实现',
+        `create_datetime` DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        `status`          TINYINT(4)  DEFAULT '1'
+        COMMENT '当前状态，默认有效',
+        PRIMARY KEY (`id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='接口SQL脚本表';
+
+      CREATE TABLE `dc_api_model_definition` (
+        `id`               VARCHAR(36)  NOT NULL
+        COMMENT '模型定义ID',
+        `project_id`       VARCHAR(36)  NOT NULL
+        COMMENT 'model所属项目id',
+        `model_name`       VARCHAR(255) NOT NULL
+        COMMENT '模型名称',
+        `model_definition` TEXT         NOT NULL
+        COMMENT '模型的实现',
+        `model_describe`   TEXT COMMENT '模型描述',
+        `create_datetime`  DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime`  DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`    VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`    VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        PRIMARY KEY (`id`),
+        KEY `project_id_index` (`project_id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='模型定义表';
+
+      CREATE TABLE `dc_api_param` (
+        `id`              VARCHAR(36) NOT NULL
+        COMMENT '参数ID',
+        `api_id`          VARCHAR(36) NOT NULL
+        COMMENT '所属接口ID',
+        `param_type`      ENUM ('REQUEST_BODY', 'PARAMETER') DEFAULT NULL,
+        `param_model`     TEXT        NOT NULL
+        COMMENT '参数模型 https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#schemaObject',
+        `create_datetime` DATETIME                          DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME                          DEFAULT CURRENT_TIMESTAMP
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36) NOT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36)                       DEFAULT NULL
+        COMMENT '修改人id',
+        PRIMARY KEY (`id`),
+        KEY `api_id_index` (`api_id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='API参数表';
+
+      CREATE TABLE `dc_api_response` (
+        `id`              VARCHAR(36) NOT NULL
+        COMMENT '返回值ID',
+        `api_id`          VARCHAR(36) NOT NULL
+        COMMENT '所属接口ID',
+        `response_model`  TEXT        NOT NULL
+        COMMENT '返回值模型',
+        `create_datetime` DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36) NOT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        PRIMARY KEY (`id`),
+        KEY `api_id_index` (`api_id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='API返回值表';
+
+      CREATE TABLE `dc_data_column` (
+        `data_source_id`  VARCHAR(36) DEFAULT NULL
+        COMMENT '数据源ID',
+        `data_base_name`  VARCHAR(64) DEFAULT NULL
+        COMMENT '数据库名称',
+        `table_name`      VARCHAR(64) DEFAULT NULL
+        COMMENT '表名称',
+        `column_name`     VARCHAR(64) DEFAULT NULL
+        COMMENT '字段名称',
+        `column_type`     VARCHAR(64) DEFAULT 'VARCHAR'
+        COMMENT '数据类型',
+        `column_comment`  VARCHAR(64) DEFAULT 'VARCHAR'
+        COMMENT '数据描述',
+        `create_datetime` DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        KEY `index1` (`data_source_id`, `data_base_name`, `table_name`, `column_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='数据库表表';
+
+      CREATE TABLE `dc_data_schema` (
+        `id`              VARCHAR(36) NOT NULL
+        COMMENT '数据库记录主键',
+        `data_source_id`  VARCHAR(36) NOT NULL
+        COMMENT '数据源ID',
+        `database_name`   VARCHAR(64) NOT NULL
+        COMMENT '数据库名称',
+        `database_encode` VARCHAR(64) DEFAULT 'utf8'
+        COMMENT '数据库编码',
+        `database_sort`   VARCHAR(64) DEFAULT 'utf8_general_ci'
+        COMMENT '数据库排序规则',
+        `remark`          TEXT COMMENT '数据库描述',
+        `create_datetime` DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `database_name` (`database_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='数据库表';
+
+      CREATE TABLE `dc_data_source` (
+        `id`                 VARCHAR(36)  NOT NULL
+        COMMENT '数据源id',
+        `data_source_name`   VARCHAR(255) NOT NULL
+        COMMENT '数据源名称',
+        `create_datetime`    DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime`    DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`      VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`      VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        `status`             TINYINT(4)  DEFAULT '1'
+        COMMENT '是否有效 默认有效',
+        `remark`             TEXT COMMENT '备注信息',
+        `data_source_type`   VARCHAR(32) DEFAULT NULL,
+        `data_source_config` VARCHAR(255) NOT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `data_source_name` (`data_source_name`),
+        KEY `data_source_name_index` (`data_source_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='数据源表';
+
+      CREATE TABLE `dc_data_table` (
+        `data_source_id`  VARCHAR(36) NOT NULL
+        COMMENT '数据源ID',
+        `data_base_name`  VARCHAR(64) NOT NULL
+        COMMENT '数据库名称',
+        `table_name`      VARCHAR(64) NOT NULL
+        COMMENT '表名称',
+        `remark`          TEXT COMMENT '表说明',
+        `create_datetime` DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        PRIMARY KEY (`data_source_id`, `data_base_name`, `table_name`),
+        KEY `table_name_index` (`table_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='数据库表表';
+
+      CREATE TABLE `dc_environment` (
+        `id`              VARCHAR(36)  NOT NULL
+        COMMENT '环境ID',
+        `env_name`        VARCHAR(255) NOT NULL
+        COMMENT '环境KEY值',
+        `env_value`       TEXT         NOT NULL
+        COMMENT '环境VALUE值',
+        `create_datetime` DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime` DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`   VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        `remark`          TEXT COMMENT '备注信息',
+        `project_id`      VARCHAR(36)  NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `envir_name_index` (`env_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='接口环境变量表';
+
+      CREATE TABLE `dc_folder` (
+        `id`                 VARCHAR(36)  NOT NULL
+        COMMENT '目录ID',
+        `project_id`         VARCHAR(36)  DEFAULT NULL,
+        `folder_name`        VARCHAR(255) NOT NULL
+        COMMENT '目录名称',
+        `folder_description` VARCHAR(512) DEFAULT NULL
+        COMMENT '目录描述',
+        `create_datetime`    DATETIME     DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime`    DATETIME     DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`      VARCHAR(36)  DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`      VARCHAR(36)  DEFAULT NULL
+        COMMENT '修改人id',
+        `status`             TINYINT(4)   DEFAULT '1'
+        COMMENT '是否有效 默认有效',
+        `remark`             TEXT COMMENT '目录备注',
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `folder_name` (`folder_name`),
+        KEY `folder_name_index` (`folder_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='目录表';
+
+      CREATE TABLE `dc_project` (
+        `id`                  VARCHAR(36)  NOT NULL
+        COMMENT '项目ID',
+        `project_name`        VARCHAR(255) NOT NULL
+        COMMENT '项目名称',
+        `project_description` TEXT COMMENT '项目描述',
+        `project_version`     VARCHAR(255) NOT NULL
+        COMMENT '项目版本',
+        `project_type_id`     VARCHAR(36)  NOT NULL
+        COMMENT '项目类型ID',
+        `create_datetime`     DATETIME    DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime`     DATETIME    DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`       VARCHAR(36) DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`       VARCHAR(36) DEFAULT NULL
+        COMMENT '修改人id',
+        `status`              TINYINT(4)  DEFAULT '1'
+        COMMENT '是否有效 默认有效',
+        `remark`              TEXT COMMENT '项目备注',
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `project_name` (`project_name`),
+        KEY `project_name_index` (`project_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='项目表';
+
+      CREATE TABLE `dc_project_doc` (
+        `id`              VARCHAR(36)                   NOT NULL,
+        `content`         TEXT,
+        `title`           VARCHAR(255) DEFAULT 'noName' NULL,
+        `content_type`    VARCHAR(32) DEFAULT NULL,
+        `create_userid`   VARCHAR(36) DEFAULT NULL,
+        `modify_userid`   VARCHAR(36) DEFAULT NULL,
+        `create_datetime` DATETIME    DEFAULT NULL,
+        `modify_datetime` DATETIME    DEFAULT NULL,
+        `status`          TINYINT(4)  DEFAULT NULL,
+        `project_id`      VARCHAR(36)                   NOT NULL,
+        PRIMARY KEY (`id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8;
+
+      CREATE TABLE `dc_project_type` (
+        `id`               VARCHAR(36)  NOT NULL DEFAULT ''
+        COMMENT '项目类型ID',
+        `type_name`        VARCHAR(255) NOT NULL
+        COMMENT '分组名称',
+        `type_description` VARCHAR(255)          DEFAULT NULL
+        COMMENT '分组描述',
+        `create_datetime`  DATETIME              DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+        `modify_datetime`  DATETIME              DEFAULT NULL
+        COMMENT '修改时间',
+        `create_userid`    VARCHAR(36)           DEFAULT NULL
+        COMMENT '创建人id',
+        `modify_userid`    VARCHAR(36)           DEFAULT NULL
+        COMMENT '修改人id',
+        `status`           TINYINT(4)            DEFAULT '1'
+        COMMENT '是否有效 默认有效',
+        PRIMARY KEY (`id`),
+        KEY `type_name_index` (`type_name`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='项目类型表';
+
+      CREATE TABLE `dc_user_api` (
+        `id`              VARCHAR(36) NOT NULL
+        COMMENT '主键ID',
+        `user_id`         VARCHAR(36) NOT NULL
+        COMMENT '用户的id',
+        `api_id`          VARCHAR(36) NOT NULL
+        COMMENT 'API 接口iD',
+        `create_datetime` DATETIME DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建日期',
+        `create_userid`   VARCHAR(36) NOT NULL
+        COMMENT '创建人id',
+        `remark`          TEXT COMMENT '备注信息',
+        PRIMARY KEY (`id`),
+        KEY `user_id_index` (`user_id`),
+        KEY `api_id_index` (`api_id`)
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT ='用户API权限表';
+
+      CREATE TABLE `dc_user_schema`(
+          id                 VARCHAR(36)                        NOT NULL
+          COMMENT 'ID'
+            PRIMARY KEY,
+          data_source_id     VARCHAR(64)                        NOT NULL
+          COMMENT '数据库ID',
+          data_database_name VARCHAR(64)                        NOT NULL,
+          user_id            VARCHAR(36)                        NOT NULL
+          COMMENT '用户ID',
+          create_datetime    DATETIME DEFAULT CURRENT_TIMESTAMP NULL
+          COMMENT '创建日期',
+          create_userid      VARCHAR(36)                        NOT NULL
+          COMMENT '创建人id',
+          remark             TEXT                               NULL
+          COMMENT '备注信息'
+        )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT '数据库权限授权表';
+
+      CREATE TABLE `dc_route`
+      (
+        `id`           VARCHAR(36)  NOT NULL
+        COMMENT '路由id',
+        `project_id`   VARCHAR(36)  NOT NULL
+        COMMENT '项目ID',
+        `env_id`       VARCHAR(36)  NOT NULL
+        COMMENT '资源ID',
+        `path`         VARCHAR(255) NOT NULL
+        COMMENT '映射入口地址',
+        `url`          VARCHAR(512) NOT NULL
+        COMMENT '映射目标URL',
+        `retryable`    TINYINT(1) DEFAULT '0'
+        COMMENT '允许重试',
+        `strip_prefix` TINYINT(1) DEFAULT '1'
+        COMMENT '移除前缀'
+      )
+        ENGINE = InnoDB
+        DEFAULT CHARSET = utf8
+        COMMENT '代理地址映射规则表';
+
+      CREATE TABLE `dc_api_statistics` (
+        `id`           VARCHAR(36) COMMENT '统计ID',
+        `api_id`       VARCHAR(36)  NOT NULL
+        COMMENT 'API',
+        `user_id`      VARCHAR(36)  NOT NULL
+        COMMENT '访问用户',
+        `api_path`     VARCHAR(512) NOT NULL
+        COMMENT '实际路径',
+        `proxy_path`   VARCHAR(512) NOT NULL
+        COMMENT '请求代理路径',
+        `proxy_method` VARCHAR(32) COMMENT '请求方式',
+        `consume_time` INTEGER  DEFAULT 0
+        COMMENT '请求消耗时间(单位ms)',
+        `status_code`  INTEGER  DEFAULT 200
+        COMMENT '响应状态码',
+        `access_time`  DATETIME DEFAULT NOW()
+        COMMENT '访问时间'
+      )
+        ENGINE = InNoDB
+        DEFAULT CHARSET = utf8
+        COMMENT 'API接口访问统计表';
+
+      CREATE TABLE dc_project_dynamic
+      (
+        id              VARCHAR(36)                        NOT NULL
+        COMMENT '项目动态ID'
+          PRIMARY KEY,
+        project_id      VARCHAR(36)                        NOT NULL
+        COMMENT '所属项目ID',
+        type            VARCHAR(32)                        NOT NULL
+        COMMENT '项目动态类型',
+        content         TEXT                               NULL
+        COMMENT '项目动态变动内容',
+        create_user     VARCHAR(36)                        NULL
+        COMMENT '创建人',
+        create_datetime DATETIME DEFAULT CURRENT_TIMESTAMP NULL
+        COMMENT '创建时间'
+      )
+        COMMENT '项目动态表';
+
+      CREATE TABLE IF NOT EXISTS dc_access_token(
+        `id` VARCHAR(36) PRIMARY KEY COMMENT '主键',
+        `user_id` VARCHAR(36) NOT NULL  COMMENT  '访问用户ID',
+        `api_id` VARCHAR(36) NOT NULL  COMMENT '接口ID',
+        `env_id` VARCHAR(36) NOT NULL  COMMENT '环境ID',
+        `access_token` TEXT NOT NULL COMMENT  'token',
+        `create_datetime`  DATETIME DEFAULT  NOW() COMMENT 'token创建时间',
+        `modify_datetime`  DATETIME DEFAULT  NULL COMMENT 'token更新时间'
+      )COMMENT  '接口访问token授权表';
+      ALTER TABLE `dc_access_token` ADD UNIQUE KEY find(`api_id`,`user_id`,`env_id`);
+
+      INSERT INTO `dc_project_type` (`id`, `type_name`, `type_description`, `status`) VALUES
+        ('2fc76258-4fa8-4bb6-8107-9060b46307c2', 'OTHERS', '其他项目', 1),
+        ('63d461f2-4b61-4808-a0c6-73c246b90f07', 'PC', 'PC项目', 1),
+        ('9807cdc5-43f9-4f37-a38d-f26e4bf50d5e', 'WEB', '简单的Web项目', 1),
+        ('a19ec328-075e-4114-98a6-fb93fae7cfc0', 'APP', 'APP项目', 1),
+        ('adb5711c-4928-41e6-b1da-52aff2d0cfbb', 'IOT', '物联网项目', 1);
+
+
+global:
+  catalog:
+    dmc.properties: |
+      connector.name=mysql
+      connection-url=jdbc:mysql://awesome-dmc-mysql:3306
+      connection-user=root
+      connection-password=testing
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

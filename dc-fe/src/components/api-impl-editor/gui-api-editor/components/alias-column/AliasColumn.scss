@@ -1,0 +1,23 @@
+.alias-column {
+  height: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: #fff;
+
+  &-input {
+    width: 98px;
+    height: 20px;
+    margin-right: 8px;
+    border: none;
+    font-size: 10px;
+  }
+
+  &-icon {
+    width: 12px;
+    height: 12px;
+    background-size: cover;
+    margin-right: 10px;
+  }
+}

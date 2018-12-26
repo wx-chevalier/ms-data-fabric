@@ -1,0 +1,119 @@
+.pre-login {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-image: url('../../assets/login-background.png');
+  background-size: cover;
+  &-container {
+    display: flex;
+    align-items: center;
+    &-content-container {
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      h1 {
+        font-size: 34px;
+      }
+      &-select-role {
+        padding-top: 60px;
+        &-account-manager {
+          display: flex;
+          align-items: center;
+          width: 450px;
+          height: 80px;
+          background-color: #fc7873;
+          opacity: 0.5;
+          border-radius: 10px;
+          margin-bottom: 40px;
+          display: flex;
+          &-svg-container {
+            display: inline-block;
+            width: 50px;
+            height: 46px;
+            margin-left: 88px;
+            background: url('../../assets/account-manager.svg');
+          }
+          &-title {
+            font-family: '微软雅黑';
+            font-size: 28px;
+            margin-left: 36px;
+            color: #fff;
+          }
+        }
+        &-api-manager {
+          display: flex;
+          align-items: center;
+          width: 450px;
+          height: 80px;
+          background-color: #13cbf7;
+          opacity: 0.5;
+          border-radius: 10px;
+          margin-bottom: 40px;
+          &-svg-container {
+            display: inline-block;
+            width: 50px;
+            height: 46px;
+            margin-left: 88px;
+            background: url('../../assets/api-manager.svg');
+          }
+          &-title {
+            font-family: '微软雅黑';
+            font-size: 28px;
+            margin-left: 36px;
+            color: #fff;
+          }
+        }
+        &-enterprise-customer {
+          display: flex;
+          align-items: center;
+          width: 450px;
+          height: 80px;
+          background-color: #01d7bd;
+          opacity: 0.5;
+          border-radius: 10px;
+          &-svg-container {
+            display: inline-block;
+            width: 50px;
+            height: 46px;
+            margin-left: 88px;
+            background: url('../../assets/enterprise-customer.svg');
+          }
+          &-title {
+            font-family: '微软雅黑';
+            font-size: 28px;
+            margin-left: 36px;
+            color: #fff;
+          }
+        }
+      }
+      &-registry {
+        width: 450px;
+        text-align: right;
+      }
+    }
+    &-footer-container {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      &-logo {
+        width: 40px;
+        height: 40px;
+        background-image: url('../../assets/footer-logo.png');
+        background-size: cover;
+        margin-right: 16px;
+      }
+      &-text {
+        display: inline-flex;
+        flex-direction: column;
+        font-size: 10px;
+      }
+    }
+  }
+}

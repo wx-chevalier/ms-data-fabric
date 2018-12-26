@@ -1,0 +1,51 @@
+.project-chart {
+  display: flex;
+  justify-content: space-around;
+
+  &-chart {
+    flex: 400px 0 0;
+  }
+  &-legend {
+    flex: 400px 0 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .item {
+      line-height: 40px;
+      height: 40px;
+
+      > span {
+        display: inline-block;
+      }
+
+      span.indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+
+        margin-right: 16px;
+      }
+
+      span.name {
+        width: 120px;
+      }
+
+      span.line {
+        border-right: 1px solid #d9d9d9;
+        margin: 0 8px;
+        height: 16px;
+      }
+
+      span.percent {
+        color: rgba(0, 0, 0, 0.45);
+        margin-right: 24px;
+      }
+
+      span.number {
+        color: rgba(0, 0, 0, 0.7);
+      }
+    }
+  }
+}

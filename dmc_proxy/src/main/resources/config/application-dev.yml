@@ -1,0 +1,35 @@
+logging:
+    level:
+        ROOT: INFO
+        com.zhuxun: TRACE
+
+spring:
+    profiles:
+        active: dev
+        include: swagger
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        driver-class-name: @devDbDriverClass@
+        url: @devDbURL@
+        username: @devDbUser@
+        password: @devDbPassword@
+
+server:
+    port: 9091
+
+# =============================================================================
+# Application specific properties
+# =============================================================================
+application:
+  security:
+    authentication:
+      jwt:
+        secret: secret
+        tokenValidityInSeconds: 3600
+        tokenValidityInSecondsForRememberMe: 360000
+
+zuul:
+    host:
+        connect-timeout-millis: 1000
+        socket-timeout-millis: 1000

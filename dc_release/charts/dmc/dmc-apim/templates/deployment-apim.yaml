@@ -1,0 +1,59 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "dmc-apim.fullname" . }}
+  labels:
+    app: {{ template "dmc-apim.name" . }}
+    chart: {{ template "dmc-apim.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "dmc-apim.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "dmc-apim.name" . }}
+        chart: {{ template "dmc-apim.chart" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: application-config
+          configMap:
+            name: {{ template "dmc-apim.fullname" . }}
+        - name: application-ds-config
+          secret:
+            secretName: {{ template "dmc-apim.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ template "dmc-apim.port" . }}
+              protocol: TCP
+          command: ["/bin/sh"]
+          args:
+            - {{ template "dmc-apim.config-path" . }}/launch.sh
+          volumeMounts:
+            - name: application-config
+              mountPath: {{ template "dmc-apim.config-path" . }}
+            - name: application-ds-config
+              mountPath: {{ template "dmc-apim.ds-config-path" . }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

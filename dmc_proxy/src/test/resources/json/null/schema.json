@@ -1,0 +1,16 @@
+{
+  "nullable": false,
+  "type": "object",
+  "properties": {
+    "name": {
+      "nullable": true,
+      "description": "姓名",
+      "example": "返回String类型数据",
+      "type": "string"
+    },
+    "book":{
+      "nullable":false,
+      "type":"array"
+    }
+  }
+}

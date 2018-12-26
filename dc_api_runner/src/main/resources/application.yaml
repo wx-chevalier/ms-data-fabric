@@ -1,0 +1,53 @@
+server:
+  port: 8082
+
+
+# Swagger 配置
+swagger:
+  url:
+    prefix: /
+
+logging:
+  level:
+    com.zhuxun: TRACE
+
+# Cros配置
+cors:
+  mapper:
+    url: "/**"
+  allow:
+    origins: "*"
+
+
+
+# 数据源配置文件
+jdbc:
+  datasource:
+    config:
+      dir: /tmp/ds-config/
+
+
+# 数据库参数配置信息
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password:
+    url: jdbc:mysql://localhost:3306/dmc_apim?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Hongkong
+
+# Presto默认配置信息
+presto:
+  datasource:
+    username: nameExample
+    password: passwordExample
+    url: urlExample
+    driver-class-name: com.presto.www
+
+# 禁用注册中心,防侵入式代码
+ribbon:
+  eureka:
+    enabled: false
+
+# RPC服务端口
+grpc:
+  port: 6565

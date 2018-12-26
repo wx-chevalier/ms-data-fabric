@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="mysql" defaultModelType="hierarchical">
+        <property name="autoDelimitKeywords" value="false"/>
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+        <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+
+        <!-- !!REQUIRED -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/dmc_apim"
+                        userId="root"
+                        password=""/>
+
+        <javaTypeResolver type="org.mybatis.generator.internal.types.JavaTypeResolverDefaultImpl">
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- !!REQUIRED -->
+        <javaModelGenerator targetPackage="com.zhuxun.dc.apirunner.dao.entity" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.zhuxun.dc.apirunner.dao.mapper" targetProject="src/main/resources">
+            <!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator targetPackage="com.zhuxun.dc.apirunner.dao.mapper" type="XMLMAPPER"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- http://www.mybatis.org/generator/configreference/generatedKey.html -->
+
+
+        <table tableName="dc_data_source">
+            <columnOverride column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </table>
+
+        <table tableName="dc_data_schame">
+            <columnOverride column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </table>
+
+        <table tableName="dc_data_table">
+            <columnOverride column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </table>
+        <table tableName="dc_data_column">
+            <columnOverride column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </table>
+
+        <table tableName="dc_api_statistics"></table>
+
+    </context>
+</generatorConfiguration>

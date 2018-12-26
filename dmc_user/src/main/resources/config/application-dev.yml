@@ -1,0 +1,30 @@
+logging:
+    level:
+        ROOT: INFO
+        com.zhuxun: TRACE
+
+spring:
+    profiles:
+        active: dev
+        include: swagger
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://dmc_dev_mysql:3306/dmc_user?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
+        password:
+
+server:
+    port: 9091
+
+# =============================================================================
+# Application specific properties
+# =============================================================================
+application:
+  security:
+    authentication:
+      jwt:
+        secret: secret
+        tokenValidityInSeconds: 3600
+        tokenValidityInSecondsForRememberMe: 360000

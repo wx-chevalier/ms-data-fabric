@@ -1,0 +1,17 @@
+{
+
+  "nullable":false,
+  "type":"object",
+  "properties":{
+    "integer":{
+      "nullable":false,
+      "type":"integer"
+    },
+    "float":{
+      "nullable":false,
+      "type":"number"
+    }
+  }
+
+
+}

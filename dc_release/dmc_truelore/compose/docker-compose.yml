@@ -1,0 +1,57 @@
+version: '3'
+services:
+  # presto
+  coordinator-1:
+    hostname: coordinator-1
+    image: ubuntu-179:5000/presto:0.208
+    ports:
+      - 8080:8080
+    command: coordinator
+    environment:
+      - PRESTO_DISCOVERY_URI=http://coordinator-1:8080
+    volumes:
+      - /opt/cluster/config/dmc/presto/catalog:/presto/etc/catalog
+
+  worker-1:
+    hostname: worker-1
+    image: ubuntu-179:5000/presto:0.208
+    depends_on: ["coordinator-1"]
+    command: worker
+    environment:
+      - PRESTO_DISCOVERY_URI=http://coordinator-1:8080
+    volumes:
+      - /opt/cluster/config/dmc/presto/catalog:/presto/etc/catalog
+
+  # dmc components
+  ui:
+    image: ubuntu-179:5000/dmc-fe:0.1
+    ports:
+      - '9000:80'
+  user-api:
+    image: ubuntu-179:5000/dmc-user:0.1
+    volumes:
+      - /opt/cluster/config/dmc/user-api:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9001:80'
+  apim-api:
+    image: ubuntu-179:5000/dmc-apim:0.1
+    volumes:
+      - /opt/cluster/config/dmc/apim-api:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9002:80'
+  proxy:
+    image: ubuntu-179:5000/dmc-proxy:0.1
+    volumes:
+      - /opt/cluster/config/dmc/proxy:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9003:80'
+  runner:
+    image: ubuntu-179:5000/dmc-api-runner:0.1
+    volumes:
+      - /opt/cluster/config/dmc/apirunner:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9004:80'

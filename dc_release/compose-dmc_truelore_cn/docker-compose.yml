@@ -1,0 +1,75 @@
+version: '3'
+services:
+  dmc-db:
+    hostname: dmc-db
+    image: mysql:5.7.14
+    command: [
+    "--character-set-server=utf8mb4",
+    "--collation-server=utf8mb4_unicode_ci",
+    "--default-authentication-plugin=mysql_native_password"
+    ]
+    volumes:
+      - /opt/cluster/config/dmc/mysql-init:/docker-entrypoint-initdb.d
+      - /opt/cluster/config/dmc/mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: testing
+
+  # presto
+  coordinator-1:
+    hostname: coordinator-1
+    image: 10.196.109.215:5000/presto:0.208
+    ports:
+      - 8080:8080
+    command: coordinator
+    environment:
+      - PRESTO_DISCOVERY_URI=http://coordinator-1:8080
+    volumes:
+      - /opt/cluster/config/dmc/presto/catalog:/presto/etc/catalog
+
+  worker-1:
+    hostname: worker-1
+    image: 10.196.109.215:5000/presto:0.208
+    depends_on: ["coordinator-1"]
+    command: worker
+    environment:
+      - PRESTO_DISCOVERY_URI=http://coordinator-1:8080
+    volumes:
+      - /opt/cluster/config/dmc/presto/catalog:/presto/etc/catalog
+
+  # dmc components
+  ui:
+    image: 10.196.109.215:5000/dmc-fe:0.1
+    ports:
+      - '9000:80'
+  user-api:
+    image: 10.196.109.215:5000/dmc-user:0.1
+    volumes:
+      - /opt/cluster/config/dmc/user-api:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9001:80'
+    depends_on: ["dmc-db"]
+  apim-api:
+    image: 10.196.109.215:5000/dmc-apim:0.1
+    volumes:
+      - /opt/cluster/config/dmc/apim-api:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9002:80'
+    depends_on: ["dmc-db"]
+  proxy:
+    image: 10.196.109.215:5000/dmc-proxy:0.1
+    volumes:
+      - /opt/cluster/config/dmc/proxy:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9003:80'
+    depends_on: ["dmc-db"]
+  runner:
+    image: 10.196.109.215:5000/dmc-api-runner:0.1
+    volumes:
+      - /opt/cluster/config/dmc/apirunner:/app/config
+      - /opt/cluster/config/dmc/ds:/app/ds-config
+    ports:
+      - '9004:80'
+    depends_on: ["dmc-db", "coordinator-1"]

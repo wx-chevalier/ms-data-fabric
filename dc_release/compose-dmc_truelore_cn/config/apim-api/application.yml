@@ -1,0 +1,46 @@
+logging:
+  level:
+    ROOT: INFO
+    com.zhuxun: TRACE
+
+spring:
+  jackson:
+    serialization.indent_output: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dmc-db:3306/dmc_api?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong
+    username: root
+    password: testing
+
+server:
+  port: 80
+  servlet:
+    context-path: /
+
+application:
+  managedDatasource:
+    dsConfigDir: /app/ds-config
+  security:
+    authentication:
+      jwt:
+        secret: secret
+        tokenValidityInSeconds: 36000
+        tokenValidityInSecondsForRememberMe: 3600000
+    tokenAuthentication:
+      jwt:
+        secret: secret
+        tokenValidityInSeconds: 60000
+        tokenValidityInSecondsForRememberMe: 3600000
+  swagger:
+    title: 'DMC 接口管理相关接口'
+    description: '接口管理接口'
+    version: '0.1'
+    basePath: '/apim'
+  cors:
+    allowCredentials: true
+    allowedOrigins: ['*']
+    allowedMethods: ['*']
+    allowedHeaders: ['*']
+  server:
+    proxyServer: 'http://dmc.truelore.cn/proxy/api/'
+    runnerServer: 'http://dmc.truelore.cn/runner/api/'

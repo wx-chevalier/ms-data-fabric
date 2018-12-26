@@ -1,0 +1,36 @@
+@import '../../theme';
+.confirm-form {
+  width: 100%;
+  text-align: center;
+  color: red;
+  > .ant-row {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.confirm-modal {
+  height: 100%;
+  display: inline-block;
+}
+
+.ant-modal {
+  .close {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.45);
+    :hover {
+      color: black;
+    }
+  }
+  .container {
+    > p {
+      color: #ff5d5e;
+      text-align: center;
+    }
+  }
+}

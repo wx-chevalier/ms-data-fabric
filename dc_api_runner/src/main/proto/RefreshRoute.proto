@@ -1,0 +1,32 @@
+//声明版本
+syntax = 'proto3';
+
+//设定一些选项信息 刷新路由表远程调用服务
+option java_multiple_files = true;
+option java_package = "com.zhuxun.dc.apirunner.rpc";
+option java_outer_classname = "RefreshRouteGrpc";
+option objc_class_prefix = "HLW";
+
+package basic;
+
+//定义服务
+service RefreshRouteService {
+
+    rpc refreshRoute(GrpcRefreshRouteRequest) returns(GrpcRefreshRouteResponse) {}
+
+}
+
+//定义请求
+//Token参数，用户验证操作的可靠性
+
+message GrpcRefreshRouteRequest {
+    string token = 1;
+}
+
+//定义响应参数
+//count 当前路由表条目总个数
+//message 当更新失败的时候返回的提示信息
+message GrpcRefreshRouteResponse {
+    uint32 count = 1;
+    string message = 2;
+}

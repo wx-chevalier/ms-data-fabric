@@ -1,0 +1,13 @@
+.database-auth {
+  .spin-container {
+    text-align: center;
+  }
+}
+
+.change-authorization-modal {
+  &-err {
+    height: 20px;
+    text-align: center;
+    color: red;
+  }
+}

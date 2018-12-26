@@ -1,0 +1,71 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "springapp.fullname" . }}
+  labels:
+    app: {{ template "springapp.name" . }}
+    chart: {{ template "springapp.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "springapp.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "springapp.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: application-config
+          configMap:
+            name: {{ template "springapp.fullname" . }}
+        - name: application-sec-config
+          secret:
+            secretName: {{ template "springapp.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ template "springapp.port" . }}
+              protocol: TCP
+            - name: grpc
+              containerPort: {{ template "grpc.port" . }}
+              protocol: TCP
+          command: ["/bin/sh"]
+          args:
+            - {{ template "springapp.config.rgl" . }}launch.sh
+          volumeMounts:
+            - name: application-config
+              mountPath: {{ template "springapp.config.rgl" . }}
+            - name: application-sec-config
+              mountPath: {{ template "springapp.config.sec" . }}
+
+          livenessProbe:
+            httpGet:
+              path: {{ template "springapp.probePath" . }}
+              port: http
+          readinessProbe:
+            httpGet:
+              path: {{ template "springapp.probePath" . }}
+              port: http
+          resources:
+
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

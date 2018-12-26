@@ -1,0 +1,62 @@
+.env-management {
+  width: 100%;
+  height: 100%;
+
+  &-project-info {
+    background-color: white;
+    margin: 10px 0;
+    padding: 30px;
+
+    &-name {
+      font-size: 25px;
+      color: #4a4a4a;
+      letter-spacing: 0;
+    }
+
+    &-description {
+      font-size: 16px;
+      color: #4a4a4a;
+      letter-spacing: 0;
+    }
+  }
+
+  &-workspace {
+    height: 100%;
+
+    &-row {
+      &-col {
+        &-env-creation-card,
+        &-env-card {
+          margin-bottom: 10px;
+        }
+
+        &-env-creation-card {
+          .ant-card-body {
+            height: 186px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            color: rgba(0, 0, 0, 0.45);
+            line-height: 24px;
+
+            &:hover {
+              color: #01d7bd;
+              cursor: pointer;
+            }
+          }
+        }
+
+        &-env-card {
+          .ant-card-body {
+            height: 139px;
+          }
+        }
+      }
+
+      .spin-container {
+        text-align: center;
+      }
+    }
+  }
+}

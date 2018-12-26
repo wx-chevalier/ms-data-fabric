@@ -1,0 +1,74 @@
+version: '3'
+services:
+  mysql-db:
+    image: mysql:5.7.14
+    command: [
+    "--character-set-server=utf8mb4",
+    "--collation-server=utf8mb4_unicode_ci",
+    "--default-authentication-plugin=mysql_native_password"
+    ]
+    restart: always
+    volumes:
+      - ./config/mysql-init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: testing
+
+  # # presto
+  # coordinator-1:
+  #   hostname: coordinator-1
+  #   image: presto:0.208
+  #   ports:
+  #     - 8080:8080
+  #   command: coordinator
+  #   environment:
+  #     - PRESTO_DISCOVERY_URI=http://coordinator-1:8080
+  #   volumes:
+  #     - ./config/presto/catalog:/presto/etc/catalog
+
+  # worker-1:
+  #   hostname: worker-1
+  #   image: presto:0.208
+  #   depends_on: ["coordinator-1"]
+  #   command: worker
+  #   environment:
+  #     - PRESTO_DISCOVERY_URI=http://coordinator-1:8080
+  #   volumes:
+  #     - ./config/presto/catalog:/presto/etc/catalog
+
+  # dmc components
+  ui:
+    image: dmc-fe:0.1
+    ports:
+      - '9000:80'
+  user-api:
+    image: dmc-user:0.1
+    volumes:
+      - ./config/user-api:/app/config
+      - ./config/ds:/app/ds-config
+    ports:
+      - '9001:80'
+    depends_on: ["mysql-db"]
+  apim-api:
+    image: dmc-apim:0.1
+    volumes:
+      - ./config/apim-api:/app/config
+      - ./config/ds:/app/ds-config
+    ports:
+      - '9002:80'
+    depends_on: ["mysql-db"]
+  # proxy:
+  #   image: dmc-proxy:0.1
+  #   volumes:
+  #     - ./config/proxy:/app/config
+  #     - ./config/ds:/app/ds-config
+  #   ports:
+  #     - '9003:80'
+  #   depends_on: ["mysql-db"]
+  # runner:
+  #   image: dmc-api-runner:0.1
+  #   volumes:
+  #     - ./config/apirunner:/app/config
+  #     - ./config/ds:/app/ds-config
+  #   ports:
+  #     - '9004:80'
+  #   depends_on: ["mysql-db", "coordinator-1"]

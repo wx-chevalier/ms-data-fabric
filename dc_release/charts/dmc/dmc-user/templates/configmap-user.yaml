@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "dmc-user.fullname" . }}
+  labels:
+    app: {{ template "dmc-user.name" . }}
+    chart: {{ template "dmc-user.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: user-api
+data:
+  application.yaml: {{ printf "|-\n%s" (.Values.config | toYaml | indent 4) }}
+  launch.sh: |
+    java -jar -Dfile.encoding=UTF8 -Duser.timezone=GMT+08 {{ .Values.container.appJar }} --spring.config.location={{ printf "%s/application.yaml" .Values.container.config.path }}

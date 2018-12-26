@@ -1,0 +1,15 @@
+.content {
+  height: 100%;
+  padding: 36px 64px;
+  background-color: white;
+  &-title {
+    text-align: center;
+  }
+  &-info {
+    display: flex;
+    justify-content: space-around;
+    font-size: 18px;
+    color: #9c9c9c;
+    padding: 16px;
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "nullable": false,
+  "description": "模型",
+  "example": "Object类型数据",
+  "type": "object",
+  "properties": {
+    "name": {
+      "nullable": false,
+      "description": "姓名",
+      "example": "返回String类型数据",
+      "type": "string"
+    },
+    "age": {
+      "nullable": false,
+      "description": "年龄",
+      "example": "返回年龄数据",
+      "type": "integer"
+    },
+    "address": {
+      "nullable": false,
+      "description": "地址",
+      "example": "地址信息",
+      "type": "string",
+      "format": "hostname"
+    }
+  }
+}

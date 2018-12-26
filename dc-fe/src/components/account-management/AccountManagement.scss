@@ -1,0 +1,39 @@
+.account-management {
+  display: flex;
+  height: 750px;
+  margin-top: 20px;
+  &-tabs {
+    width: 200px;
+    margin-right: 10px;
+    background-color: #fff;
+    .audit {
+      padding: 16px 24px;
+      font-size: 18px;
+      cursor: pointer;
+      &.active {
+        border-bottom: 3px solid #fc7873;
+      }
+    }
+    .auth {
+      padding: 16px 24px;
+      font-size: 18px;
+      cursor: pointer;
+      &.active {
+        border-bottom: 3px solid #fc7873;
+      }
+    }
+    .user-management {
+      padding: 16px 24px;
+      font-size: 18px;
+      cursor: pointer;
+      &.active {
+        border-bottom: 3px solid #fc7873;
+      }
+    }
+  }
+  &-content-container {
+    flex: 1;
+    padding: 16px;
+    background-color: #fff;
+  }
+}

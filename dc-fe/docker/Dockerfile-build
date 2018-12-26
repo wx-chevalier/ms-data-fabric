@@ -1,0 +1,10 @@
+FROM node:8-alpine
+ARG PUBLIC_URL=/
+
+RUN echo -e 'https://mirror.tuna.tsinghua.edu.cn/alpine/edge/main\nhttps://mirror.tuna.tsinghua.edu.cn/alpine/edge/community\nhttps://mirror.tuna.tsinghua.edu.cn/alpine/edge/testing' > /etc/apk/repositories \
+    && apk add --no-cache yarn
+WORKDIR /app
+COPY . /app
+
+RUN PUBLIC_URL=${PUBLIC_URL} yarn --registry https://registry.npm.taobao.org install
+RUN yarn build

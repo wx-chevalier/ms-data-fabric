@@ -1,0 +1,38 @@
+logging:
+    level:
+        ROOT: INFO
+        com.zhuxun: TRACE
+
+spring:
+    name: todo
+    profiles:
+        active: dev
+        include: swagger
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        driver-class-name: @devDbDriverClass@
+        url: @devDbURL@
+        username: @devDbUser@
+        password: @devDbPassword@
+
+server:
+    port: 9093
+
+# =============================================================================
+# Application specific properties
+# =============================================================================
+application:
+  security:
+    authentication:
+      jwt:
+        secret: secret
+        tokenValidityInSeconds: 3600
+        tokenValidityInSecondsForRememberMe: 360000
+  managedDatasource:
+    presto:
+      driverClassName: ""
+      url: ""
+      username: ""
+      password: ""
+    dsConfigDir: ""

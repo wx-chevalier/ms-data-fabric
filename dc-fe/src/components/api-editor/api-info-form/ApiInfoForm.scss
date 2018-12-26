@@ -1,0 +1,26 @@
+.api-info-form {
+  width: 100%;
+  height: 100%;
+
+  &-row {
+    display: flex;
+
+    &-item {
+      margin-right: 32px;
+      flex-shrink: 1;
+      flex-grow: 1;
+
+      &-label {
+        line-height: 1em;
+      }
+    }
+
+    &-item:first-child {
+      flex: 300px 0 0;
+    }
+
+    &-item:last-child {
+      margin-right: 0;
+    }
+  }
+}

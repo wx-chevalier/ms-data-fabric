@@ -1,0 +1,32 @@
+.api-dev-tool {
+  &-toolbar {
+    padding: 2px 10px 2px 10px;
+    // box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    &-left {
+      button {
+        margin-left: 20px;
+      }
+      i {
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+    &-right {
+    }
+  }
+  &-body {
+    display: flex;
+    &-parsed-args {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      flex: 1;
+    }
+    &-response {
+      flex: 1;
+    }
+  }
+}

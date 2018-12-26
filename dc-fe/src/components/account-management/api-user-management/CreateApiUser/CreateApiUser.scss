@@ -1,0 +1,14 @@
+.create-api-user {
+  .button-group {
+    display: flex;
+    justify-content: center;
+    .ant-btn {
+      margin: 0 50px;
+    }
+  }
+  &-err {
+    height: 20px;
+    text-align: center;
+    color: red;
+  }
+}

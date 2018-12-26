@@ -1,0 +1,157 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.2.RELEASE'
+        mysqlConnectorVersion = '5.1.45'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("mysql:mysql-connector-java:${mysqlConnectorVersion}")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+plugins {
+    id 'net.ltgt.apt' version '0.10'
+    id 'org.flywaydb.flyway' version '5.1.3'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.zhuxun'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+defaultTasks 'bootRun'
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+ext {
+    defaultDevDbJdbc = [
+            url        : 'jdbc:mysql://dmc_dev_mysql:3306/dmc_user',
+            user       : 'root',
+            driverClass: 'com.mysql.jdbc.Driver',
+            password   : null
+    ]
+
+    springBootVersion = '2.0.3.RELEASE'
+    springCloudVersion = 'Finchley.BUILD-SNAPSHOT'
+    springfoxSwaggerVersion = '2.8.0'
+    jjwtVersion = '0.9.0'
+    mysqlConnectorVersion = '6.0.6'
+    lombokVersion = '1.16.22'
+
+    mybatisSpringBootVersion = '1.3.2'
+    mybatisGeneratorCoreVersion = '1.3.6'
+}
+
+configurations {
+    // ant task
+    mbgenerator
+}
+
+sourceSets {
+    generated {
+        java.srcDirs = ["${buildDir}/generated/src/java"]
+        resources.srcDirs = ["${buildDir}/generated/src/resources"]
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+
+    main {
+        java {
+            srcDirs "${buildDir}/generated/src/java"
+        }
+        resources {
+            srcDirs "${buildDir}/generated/src/resources"
+        }
+    }
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile "org.springframework.boot:spring-boot-starter-security"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    compile "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootVersion}"
+    compile "io.springfox:springfox-swagger2:${springfoxSwaggerVersion}"
+    compile "io.springfox:springfox-swagger-ui:${springfoxSwaggerVersion}"
+    compile "io.jsonwebtoken:jjwt:${jjwtVersion}"
+
+    runtime "mysql:mysql-connector-java:${mysqlConnectorVersion}"
+    runtime 'com.h2database:h2'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.security:spring-security-test'
+    compile "org.projectlombok:lombok:${lombokVersion}"
+    apt "org.projectlombok:lombok:${lombokVersion}"
+
+
+    // https://github.com/mybatis/generator/issues/349
+    mbgenerator "mysql:mysql-connector-java:5.1.45"
+    mbgenerator "org.mybatis.generator:mybatis-generator-core:${mybatisGeneratorCoreVersion}"
+    mbgenerator 'tk.mybatis:mapper:3.3.9'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-starter-parent:${springBootVersion}"
+    }
+}
+
+flyway {
+    url = defaultDevDbJdbc.url
+    user = defaultDevDbJdbc.user
+    password = defaultDevDbJdbc.password
+    schemas = ['dmc_user']
+}
+
+task mbgeneratorClean(type: Delete) {
+    delete sourceSets.generated.java.srcDirs[0].path, sourceSets.generated.resources.srcDirs[0].path
+}
+
+task mbgenerator(dependsOn: [mbgeneratorClean, flywayMigrate]) {
+    ant.properties['target_package'] = 'com.zhuxun.dmc.user.repository'
+    ant.properties['src_java'] = sourceSets.generated.java.srcDirs[0].path
+    ant.properties['src_resources'] = sourceSets.generated.resources.srcDirs[0].path
+    ant.properties['jdbc_url'] = (String) defaultDevDbJdbc.url
+    ant.properties['jdbc_user'] = (String) defaultDevDbJdbc.user
+    ant.properties['jdbc_password'] = defaultDevDbJdbc.password == null ? '' : defaultDevDbJdbc.password
+    ant.properties['jdbc_driver_class'] = (String) defaultDevDbJdbc.driverClass
+
+    doLast {
+        new File((String) ant.properties['src_java']).mkdirs();
+        new File((String) ant.properties['src_resources']).mkdirs();
+
+        ant.taskdef(
+                name: 'mbgenerator',
+                classname: 'org.mybatis.generator.ant.GeneratorAntTask',
+                classpath: configurations.mbgenerator.asPath)
+        ant.mbgenerator(
+                overwrite: 'true',
+                configfile: 'src/main/resources/mybatis/generatorConfig.xml',
+                verbose: 'true') {
+            propertyset {
+                propertyref(name: 'target_package')
+                propertyref(name: 'src_java')
+                propertyref(name: 'src_resources')
+                propertyref(name: 'jdbc_url')
+                propertyref(name: 'jdbc_user')
+                propertyref(name: 'jdbc_password')
+                propertyref(name: 'jdbc_driver_class')
+            }
+        }
+    }
+}
+
+compileJava.dependsOn(mbgenerator)
+

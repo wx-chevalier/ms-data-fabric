@@ -1,0 +1,20 @@
+[submodule "modules/dmc_fe"]
+	path = modules/dmc_fe
+	url = http://gitlab.truelore.cn/JYPT/dragon-dc/dc-fe.git
+	ignore = dirty
+[submodule "modules/dmc_apim"]
+	path = modules/dmc_apim
+	url = http://gitlab.truelore.cn/JYPT/dragon-dc/dmc_apim.git
+	ignore = dirty
+[submodule "modules/dmc_user"]
+	path = modules/dmc_user
+	url = http://gitlab.truelore.cn/JYPT/dragon-dc/dmc_user.git
+	ignore = dirty
+[submodule "modules/dmc_proxy"]
+	path = modules/dmc_proxy
+	url = http://gitlab.truelore.cn/JYPT/dragon-dc/dmc_proxy.git
+	ignore = dirty
+[submodule "modules/dmc_api-runner"]
+	path = modules/dmc_api-runner
+	url = http://gitlab.truelore.cn/JYPT/dragon-dc/dmc_api-runner.git
+	ignore = dirty

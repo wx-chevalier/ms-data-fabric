@@ -1,0 +1,43 @@
+.api-test {
+  margin-top: 20px;
+  &-request {
+    padding: 20px;
+    border: 2px solid rgb(233, 233, 233);
+    border-radius: 4px;
+  }
+  &-response {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid rgb(233, 233, 233);
+    border-radius: 4px;
+  }
+  .ant-form-item {
+    margin-bottom: 0 !important;
+  }
+  .ant-form-item.button {
+    padding: 20px 0;
+    .ant-form-item-control-wrapper {
+      border: 0;
+      .ant-form-item-control {
+        text-align: center;
+      }
+    }
+  }
+  .ant-form-item-label {
+    border-right: 1px solid rgb(233, 233, 233);
+    border-bottom: 1px solid rgb(233, 233, 233);
+    text-align: center;
+  }
+  .ant-form-item-control-wrapper {
+    padding: 0 48px;
+    border-bottom: 1px solid rgb(233, 233, 233);
+  }
+}
+
+.table-header {
+  margin-top: 6px;
+  padding: 20px 0;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #f8f8f8;
+}

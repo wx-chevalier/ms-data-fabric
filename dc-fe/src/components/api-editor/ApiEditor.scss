@@ -1,0 +1,16 @@
+.api-editor {
+  width: 100%;
+  background-color: #fff;
+  & > div {
+    border-bottom: 8px solid #fafafa;
+    padding: 24px 32px;
+    background-clip: content-box;
+  }
+  & > div:last-child {
+    border-bottom: none;
+    width: 296px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "dmc.fullname" . }}
+  labels:
+    app: {{ template "dmc.name" . }}
+    chart: {{ template "dmc.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+        - path: {{ .Values.ing.userPath }}
+          backend:
+            serviceName: {{ template "dmc-user.fullname" . }}
+            servicePort: http
+        - path: {{ .Values.ing.apimPath }}
+          backend:
+            serviceName: {{ template "dmc-apim.fullname" . }}
+            servicePort: http
+        - path: {{ .Values.ing.uiPath }}
+          backend:
+            serviceName: {{ template "dmc-ui.fullname" . }}
+            servicePort: http
+        - path: {{ .Values.ing.proxyPath }}
+          backend:
+            serviceName: {{ template "dmc-proxy.fullname" . }}
+            servicePort: http
+        - path: {{ .Values.ing.apiRunnerPath }}
+          backend:
+            serviceName: {{ template "dmc-api-runner.fullname" . }}
+            servicePort: http

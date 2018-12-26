@@ -1,0 +1,34 @@
+.join-condition {
+  width: 264px;
+  padding: 24px;
+  background-color: #fff;
+
+  &-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 32px;
+  }
+
+  &-select {
+    margin-bottom: 32px;
+    display: flex;
+
+    &-left,
+    &-operator,
+    &-right {
+      width: 33%;
+      margin-right: 8px;
+    }
+
+    &-right {
+      margin-right: 0;
+    }
+  }
+
+  &-buttons {
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-around;
+  }
+}

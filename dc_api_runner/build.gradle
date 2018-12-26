@@ -1,0 +1,151 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath("gradle.plugin.com.xyznotes.gradle:mybatis-generator-plugin:1.3.5.1")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE")
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'net.ltgt.apt' version '0.10'
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
+}
+
+group 'com.zhuxun.dc'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'idea'
+apply plugin: "io.spring.dependency-management"
+apply plugin: "com.xyznotes.gradle.MybatisGenerator"
+apply plugin: 'org.springframework.boot'
+apply plugin: 'com.google.protobuf'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+        url "http://repo.spring.io/plugins-release"
+    }
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+dependencyManagement {
+    imports {
+        //spring bom helps us to declare dependencies without specifying version numbers.
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.M7"
+    }
+}
+
+configurations {
+    mybatisGenerator
+}
+
+mybatisGenerator {
+    verbose = true
+    configFile = 'src/main/resources/generatorConfig.xml'
+}
+
+ext {
+    springBootVar = '2.0.1.RELEASE'
+    druidVersion = '1.1.9'
+    guavaVersion = '23.5-jre'
+    sqljdbc4Version = '4.0.2206.100'
+    ojdbc5Version = '11.2.0.3'
+    mysqlConnectorVersion = '5.1.45'
+    jacksonVersion = '2.9.5'
+    jsonVersion = '20180130'
+    openapiParserVersion = '2.1.1-201803281732'
+    swaggerCoreVersion = '2.0.1'
+    swaggerParserVersion = '1.0.36-SNAPSHOT'
+    prestoVersion = '0.201'
+    lombokVersion = '1.16.20'
+    junitVersion = '4.12'
+    swaggerVersion = '2.8.0'
+    snakeyamlVersion = '1.21'
+    mybatisVersion = '3.4.2'
+    mybatisSpringBootVersion = '1.2.0'
+    jjwtVersion = '0.7.0'
+    shiroVersion = '1.4.0-RC2'
+    grpcVersion = '1.11.0'
+    grpcSpringBootVersion = '2.3.2'
+}
+
+dependencies {
+    compile group: 'com.alibaba', name: 'druid', version: druidVersion
+
+    compile group: 'com.alibaba', name: 'druid-spring-boot-starter', version: druidVersion
+
+    compile group: 'com.google.guava', name: 'guava', version: guavaVersion
+    compile group: 'com.facebook.presto', name: 'presto-jdbc', version: prestoVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+    compile group: 'org.json', name: 'json', version: jsonVersion
+    compile group: 'io.swagger.core.v3', name: 'swagger-core', version: '2.0.1'
+
+    compile "org.springframework.boot:spring-boot-starter-web:$springBootVar"
+    compile("io.springfox:springfox-swagger2:${swaggerVersion}")
+    compile("io.springfox:springfox-swagger-ui:${swaggerVersion}")
+
+    compile("org.mybatis:mybatis:${mybatisVersion}")
+
+    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootVersion}")
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+
+    compile("io.jsonwebtoken:jjwt:${jjwtVersion}")
+
+    compile("org.apache.shiro:shiro-all:${shiroVersion}")
+    compile files("lib/com/oracle/ojdbc6/11.2.0.3/ojdbc6-11.2.0.3.jar")
+    compile files("lib/com/microsoft/sqlserver/sqljdbc4/4.0.2206.100/sqljdbc4-4.0.2206.100.jar")
+
+
+    runtime group: 'mysql', name: 'mysql-connector-java', version: mysqlConnectorVersion
+    testCompile group: 'junit', name: 'junit', version: junitVersion
+
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-zuul', version: '1.4.4.RELEASE'
+
+    compile "org.lognet:grpc-spring-boot-starter:${grpcSpringBootVersion}"
+
+    compile "org.projectlombok:lombok:${lombokVersion}"
+}
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Gradle")
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.3.0'
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {
+                option 'enable_deprecated=false'
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        sourceDirs += file("${projectDir}/build/generated/source/proto/main/java");
+        sourceDirs += file("${projectDir}/build/generated/source/proto/main/grpc");
+    }
+}

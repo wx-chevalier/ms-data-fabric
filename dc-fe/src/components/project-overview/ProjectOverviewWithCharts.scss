@@ -1,0 +1,87 @@
+.project-overview-with-charts {
+  width: 100%;
+  height: 100%;
+
+  font-family: PingFangSC-Regular;
+
+  &-paper {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    background: white;
+  }
+
+  &-charts {
+    height: 400px;
+    margin-bottom: 16px;
+
+    .ant-tabs-tab {
+      font-family: PingFang-SC-Medium;
+      font-size: 16px;
+    }
+
+    .ant-tabs-tab:hover,
+    .ant-tabs-tab-active {
+      color: #01d7bd;
+    }
+
+    .ant-tabs-ink-bar {
+      background-color: #01d7bd;
+    }
+  }
+
+  &-projects {
+    padding: 16px;
+
+    > .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      .left {
+        display: flex;
+        justify-content: flex-start;
+
+        h2 {
+          margin-right: 32px;
+        }
+
+        button {
+          margin-right: 16px;
+        }
+      }
+    }
+
+    > .cards {
+      display: flex;
+      flex-wrap: wrap;
+
+      .row {
+        width: 100%;
+
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .project-card {
+        margin-bottom: 16px;
+
+        .name {
+          margin-bottom: 8px;
+          line-height: 24px;
+
+          font-family: PingFangSC-Medium;
+          font-size: 16px;
+        }
+
+        .info {
+          font-family: PingFangSC-Regular;
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.45);
+
+          span {
+            margin-right: 24px;
+          }
+        }
+      }
+    }
+  }
+}

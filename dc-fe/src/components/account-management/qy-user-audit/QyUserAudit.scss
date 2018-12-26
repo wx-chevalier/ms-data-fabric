@@ -1,0 +1,50 @@
+.enterprise-user-audit {
+  height: 100%;
+  overflow: auto;
+  &-audit-list {
+    .spin-container {
+      text-align: center;
+    }
+  }
+}
+
+.view-license-modal {
+  > .ant-modal-content {
+    > .ant-modal-footer {
+      > div {
+        display: flex;
+        justify-content: center;
+        > button {
+          margin: 10px 50px;
+        }
+      }
+    }
+  }
+}
+
+.audit-modal {
+  > .ant-modal-content {
+    > .ant-modal-body {
+      > .audit-confirm {
+        font-size: 16px;
+        display: flex;
+        justify-content: center;
+        padding: 40px 0;
+      }
+    }
+    > .ant-modal-footer {
+      > div {
+        display: flex;
+        justify-content: center;
+        > button {
+          margin: 10px 50px;
+        }
+      }
+    }
+  }
+  &-err {
+    height: 20px;
+    text-align: center;
+    color: red;
+  }
+}

@@ -1,0 +1,25 @@
+.sql-api-editor {
+  display: flex;
+  flex: 1;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  &-database-view {
+    width: 400px;
+    padding: 10px;
+    .sql-api-editor-database-tip {
+      margin: 0 5px 10px 5px;
+      background: #ecf6fd;
+      border: 1px solid #add8f7;
+      border-radius: 4px;
+      font-family: PingFangSC-Regular;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.65);
+      letter-spacing: 0;
+      line-height: 18px;
+      padding: 0 10px;
+    }
+  }
+  &-sql-editor {
+    flex: 1;
+    padding: 10px;
+  }
+}

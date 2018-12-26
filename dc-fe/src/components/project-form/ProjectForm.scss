@@ -1,0 +1,17 @@
+.project-form {
+  width: 100%;
+  height: 100%;
+
+  &-buttons {
+    width: 200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &-err {
+    height: 20px;
+    text-align: center;
+    color: red;
+  }
+}

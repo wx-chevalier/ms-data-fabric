@@ -1,0 +1,19 @@
+{
+  "name":"Jack",
+  "age":12,
+  "address":{
+    "number":111,
+    "country":"China",
+    "provide":"AnHui"
+  },
+  "adult":true,
+  "school":[
+    "江苏省南京市第一小学",
+    "江苏省南京市第二小学",
+    "江苏省南京市第三小学",
+    "江苏省南京市第四小学",
+    "江苏省南京市第无小学"
+  ]
+
+
+}

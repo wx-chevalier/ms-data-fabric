@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "dmc-apim.fullname" . }}
+  labels:
+    app: {{ template "dmc-apim.name" . }}
+    chart: {{ template "dmc-apim.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: apim-api
+data:
+  application.yaml: |-
+{{ include "dmc-apim.config" . | indent 4 }}
+  launch.sh: |
+    java -jar -Dfile.encoding=UTF8 -Duser.timezone=GMT+08 {{ .Values.container.appJar }} --spring.config.location={{ printf "%s/application.yaml" .Values.container.config.path }}

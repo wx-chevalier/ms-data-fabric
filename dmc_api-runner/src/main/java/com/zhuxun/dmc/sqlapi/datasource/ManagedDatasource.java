@@ -1,0 +1,183 @@
+package com.zhuxun.dmc.sqlapi.datasource;
+
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.zhuxun.dmc.sqlapi.errors.ManagedDatasourceException;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+
+import static com.google.common.base.Strings.emptyToNull;
+
+@Slf4j
+public class ManagedDatasource {
+  private ManagedDatasourceProperties managedDatasourceProperties;
+  private DatasourceCache dsCache = new DatasourceCache();
+
+  public ManagedDatasource(ManagedDatasourceProperties managedDatasourceProperties) {
+    this.managedDatasourceProperties = managedDatasourceProperties;
+  }
+
+  public Connection getConnection(String dsName, String schemaName) {
+    log.debug("获取对数据源 {} 中 {} 的连接", dsName, schemaName);
+    // TODO
+    throw new RuntimeException("Not supported");
+  }
+
+  public DataSource getDataSource(String dsName) throws ManagedDatasourceException {
+    log.debug("获取对数据源 {} 的连接池", dsName);
+    Properties properties;
+    if (dsName == null) {
+      properties = prestoProperties();
+    } else {
+      DatasourceConfig dsConfig = getDsConfig(dsName);
+      properties = dsConfig.toProperties();
+    }
+
+    try {
+      Optional<DataSource> ds = dsCache.get(dsName);
+      if (ds.isPresent()) {
+        return ds.get();
+      } else {
+        return dsCache.put(dsName, DruidDataSourceFactory.createDataSource(properties));
+      }
+    } catch (Exception e) {
+      throw new ManagedDatasourceException("数据源创建出错: " + dsName, e);
+    }
+  }
+
+  public Connection getConnection(String dsName) throws ManagedDatasourceException {
+    log.debug("获取对数据源 {} 的连接", dsName);
+
+    try {
+      return getDataSource(dsName).getConnection();
+    } catch (SQLException e) {
+      throw new ManagedDatasourceException("连接创建失败: " + dsName, e);
+    }
+  }
+
+  public DatasourceConfig getDsConfig(String dsName) throws ManagedDatasourceException {
+    return DatasourceConfig.fromPropertyFile(getDsConfigFile(dsName));
+  }
+
+  public File getDsConfigFile(String dsName) throws ManagedDatasourceException {
+    File configFile =
+        new File(managedDatasourceProperties.getDsConfigDir(), dsName + ".properties");
+    if (!configFile.exists()) {
+      throw new ManagedDatasourceException("数据源配置不存在: " + dsName);
+    }
+    return configFile;
+  }
+
+  private Properties prestoProperties() {
+    Properties prop = new Properties();
+
+    DataSourceProperties presto = managedDatasourceProperties.getPresto();
+    prop.setProperty(DruidDataSourceFactory.PROP_USERNAME, presto.getUsername());
+    prop.setProperty(DruidDataSourceFactory.PROP_URL, presto.getUrl());
+    if (emptyToNull(presto.getPassword()) != null) {
+      prop.setProperty(DruidDataSourceFactory.PROP_PASSWORD, presto.getDataPassword());
+    }
+
+    return prop;
+  }
+
+  @Accessors(chain = true)
+  @Data
+  public static class DatasourceConfig {
+    String type;
+
+    String url;
+
+    String user;
+
+    String password;
+
+    public static DatasourceConfig fromPropertyFile(File f) throws ManagedDatasourceException {
+      FileInputStream ins;
+      Properties properties = new Properties();
+      try {
+        ins = new FileInputStream(f);
+        properties.load(ins);
+      } catch (IOException e) {
+        throw new ManagedDatasourceException("数据源配置加载失败: " + f, e);
+      }
+
+      return new DatasourceConfig()
+          .setType(properties.getProperty("connector.name"))
+          .setUrl(properties.getProperty("connection-url"))
+          .setUser(properties.getProperty("connection-user"))
+          .setPassword(properties.getProperty("connection-password"));
+    }
+
+    public Properties toProperties() {
+      Properties prop = new Properties();
+      prop.setProperty(DruidDataSourceFactory.PROP_USERNAME, user);
+      prop.setProperty(DruidDataSourceFactory.PROP_URL, url);
+      if (emptyToNull(password) != null) {
+        prop.setProperty(DruidDataSourceFactory.PROP_PASSWORD, password);
+      }
+
+      if ("oracle".equals(type)) {
+        // https://github.com/alibaba/druid/issues/2377
+        prop.setProperty(DruidDataSourceFactory.PROP_VALIDATIONQUERY, "SELECT 1 from dual");
+      } else {
+        prop.setProperty(DruidDataSourceFactory.PROP_VALIDATIONQUERY, "SELECT 1");
+      }
+      prop.setProperty(DruidDataSourceFactory.PROP_INITIALSIZE, "1");
+      prop.setProperty(DruidDataSourceFactory.PROP_MINIDLE, "1");
+      prop.setProperty(DruidDataSourceFactory.PROP_MAXACTIVE, "10");
+      prop.setProperty(DruidDataSourceFactory.PROP_MAXWAIT, "60000");
+      prop.setProperty(DruidDataSourceFactory.PROP_TIMEBETWEENEVICTIONRUNSMILLIS, "60000");
+      prop.setProperty(DruidDataSourceFactory.PROP_MINEVICTABLEIDLETIMEMILLIS, "300000");
+      prop.setProperty(DruidDataSourceFactory.PROP_TESTWHILEIDLE, "true");
+      prop.setProperty(DruidDataSourceFactory.PROP_TESTONBORROW, "false");
+      prop.setProperty(DruidDataSourceFactory.PROP_POOLPREPAREDSTATEMENTS, "true");
+      prop.setProperty(DruidDataSourceFactory.PROP_MAXOPENPREPAREDSTATEMENTS, "20");
+
+      return prop;
+    }
+  }
+
+  public class DatasourceCache {
+    Map<String, Integer> dsNameToHash = new HashMap<>();
+    Map<Integer, DataSource> dsHashToDs = new HashMap<>();
+
+    public Optional<DataSource> get(String dsName) throws ManagedDatasourceException {
+      Integer dsHash = getDsHash(dsName);
+      return Optional.ofNullable(dsHashToDs.getOrDefault(dsHash, null));
+    }
+
+    public DataSource put(String dsName, DataSource dataSource) throws ManagedDatasourceException {
+      Integer dsHash = getDsHash(dsName);
+      Integer oldHash = dsNameToHash.getOrDefault(dsName, null);
+      if (oldHash != null) {
+        if (dsHashToDs.containsKey(oldHash)) {
+          dsHashToDs.remove(oldHash);
+        }
+      }
+      dsNameToHash.put(dsName, dsHash);
+      dsHashToDs.put(dsHash, dataSource);
+      return dataSource;
+    }
+
+    private Integer getDsHash(String dsName) throws ManagedDatasourceException {
+      if (dsName == null) {
+        DataSourceProperties presto = managedDatasourceProperties.getPresto();
+        return Objects.hash(presto.getUsername(), presto.getUrl(), presto.getPassword());
+      } else {
+        DatasourceConfig dsConfig = getDsConfig(dsName);
+        return Objects.hash(
+            dsConfig.getType(), dsConfig.getUser(), dsConfig.getUrl(), dsConfig.getPassword());
+      }
+    }
+  }
+}

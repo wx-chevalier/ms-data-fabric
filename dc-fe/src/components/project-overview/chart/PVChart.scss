@@ -1,0 +1,77 @@
+.pv-chart {
+  display: flex;
+  padding: 0 50px 16px 50px;
+
+  justify-content: space-between;
+
+  &-info {
+    display: flex;
+    margin-bottom: 16px;
+
+    > div {
+      flex: 50% 1 1;
+    }
+
+    .label {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .value {
+      font-size: 26px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  &-toggle {
+    width: 270px;
+    margin-bottom: 32px;
+
+    > span {
+      margin-right: 24px;
+    }
+
+    .label--active {
+      color: #fea0ba;
+    }
+  }
+
+  &-ranking {
+    .item {
+      display: flex;
+      justify-content: space-between;
+
+      line-height: 32px;
+    }
+
+    .label {
+      height: 20px;
+      width: 20px;
+
+      margin-right: 16px;
+
+      font-size: 12px;
+      background-color: #f0f2f5;
+      border-radius: 50%;
+
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .item:nth-child(-n + 4) {
+      .label {
+        background: #01d7bd;
+        color: white;
+      }
+    }
+
+    .right {
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+
+  &-chart {
+    width: 800px;
+  }
+}

@@ -1,0 +1,22 @@
+version: '2.0'
+services:
+  dmc_dev_mysql:
+    image: mysql:5.7.14
+    volumes:
+      - ./src/main/resources/db/creation:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  build:
+    image: gradle:4.8-jdk8-slim
+    volumes:
+      - .:/home/gradle
+    command:
+      - gradle
+      - --project-cache-dir=/home/gradle/.gradle
+      - -PdevDbURL=jdbc:mysql://dmc_dev_mysql:3306/dmc_api?useUnicode=true&characterEncoding=utf8&useSSL=false
+      - -PdevDbUser=root
+      - -PdevDbPassword=
+      - clean
+      - build
+    depends_on: ["dmc_dev_mysql"]

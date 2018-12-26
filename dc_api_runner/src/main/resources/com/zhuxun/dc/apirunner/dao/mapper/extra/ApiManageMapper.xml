@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhuxun.dc.apirunner.dao.mapper.extra.ApiManageMapper">
+
+    <resultMap id="VzuulRoute" type="com.zhuxun.dc.apirunner.entity.vo.VZuulRoute">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="api_name" jdbcType="VARCHAR" property="apiName"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+    </resultMap>
+
+    <resultMap id="VRouteMap" type="com.zhuxun.dc.apirunner.entity.vo.VRoute">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="api_id" jdbcType="VARCHAR" property="apiId"/>
+        <result column="env_id" jdbcType="VARCHAR" property="envId"/>
+        <result column="operation" jdbcType="VARCHAR" property="operation"/>
+        <result column="protocol" jdbcType="VARCHAR" property="protocol"/>
+        <result column="env_name" jdbcType="VARCHAR" property="envName"/>
+        <result column="env_value" jdbcType="VARCHAR" property="envValue"/>
+    </resultMap>
+
+    <resultMap id="DcEnvironmentMap" type="com.zhuxun.dc.apirunner.dao.entity.DcEnvironment">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="env_name" jdbcType="VARCHAR" property="envName"/>
+        <result column="env_value" jdbcType="VARCHAR" property="envValue"/>
+        <result column="project_id" jdbcType="VARCHAR" property="projectId"/>
+    </resultMap>
+
+    <sql id="Base_Dc_Env">
+      id,env_name,env_value,project_id
+    </sql>
+
+    <!--查找API实例-->
+    <select id="getApiById" resultType="java.util.Map">
+        SELECT
+          dc_api.id,
+          dc_api.api_name as apiName,
+          dc_api.api_path as apiPath,
+          dc_api.api_summary as apiSummary,
+          dc_api.api_operation as apiOparation,
+          dc_api.api_protocol as apiProtocol,
+          dc_api_impl.api_impl as apiImpl,
+          dc_api_response.response_model as apiResponseModel,
+          dc_api_param.param_model as apiParamModel,
+          DATE_FORMAT(dc_api.create_datetime,'%Y-%m-%d %T') as createDatetime,
+          DATE_FORMAT(dc_api.modify_datetime,'%Y-%m-%d %T') as modifyDatetime
+        FROM dc_api
+        LEFT JOIN dc_api_param ON dc_api.id = dc_api_param.api_id
+        LEFT JOIN dc_api_response ON dc_api.id = dc_api_response.api_id
+        LEFT JOIN dc_api_impl ON dc_api.id =dc_api_impl.api_id
+        WHERE dc_api.id = #{apiId}
+    </select>
+
+    <!--获取可用的外部接口接口列表-->
+    <!--FIXME 修复只选择外部接口，添加过滤条件即可-->
+    <select id="getAllRoute" resultMap="VzuulRoute">
+        select
+          id,
+          CONCAT("/apis/", id, "/**")            as path,
+          api_name,
+          CONCAT(api_protocol, "://", api_path) as url
+        from dc_api
+        WHERE status = 1;
+    </select>
+
+
+    <!--获取所有带有Proxy_的环境变量信息-->
+    <select id="getProxyNameList" resultMap="DcEnvironmentMap">
+        SELECT
+        <include refid="Base_Dc_Env"/>
+        FROM dc_environment
+        WHERE env_value like CONCAT('%','PROXY_','%');
+    </select>
+
+    <!--获取不同用户的API访问统计信息-->
+    <select id="getApiAccessStatistics" resultType="com.zhuxun.dc.apirunner.entity.vo.api.VStatistics">
+        SELECT
+        DATE_FORMAT(access_time, #{condition.groupByFormat}) AS time,
+        count(*) AS count
+        FROM dc_api_statistics
+        <where>
+            <if test="userId">
+                user_id = #{userId}
+            </if>
+            <if test="condition.startTime">
+                AND access_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime">
+                AND access_time &lt;= #{condition.endTime}
+            </if>
+            <if test="condition.apiId">
+                AND api_id = #{condition.apiId}
+            </if>
+        </where>
+        GROUP BY DATE_FORMAT(access_time, #{condition.groupByFormat});
+    </select>
+
+    <!--查询指定apiId的用户访问情况-->
+    <select id="getApiAccessStatisticsWithUser" resultType="com.zhuxun.dc.apirunner.entity.vo.api.VStatistics">
+        SELECT
+        user_id AS userId,
+        count(*) as count
+        FROM dc_api_statistics
+        <where>
+            <if test="apiId">
+                api_id = #{apiId}
+            </if>
+        </where>
+        GROUP BY user_id
+    </select>
+
+    <!--查询指定API的访问耗时情况-->
+    <select id="getAPiAccessStatisticsWithConsumeTime"
+            resultType="com.zhuxun.dc.apirunner.entity.vo.api.VStatistics">
+        SELECT
+        consume_time as consumeTime,
+        count(*) as count
+        FROM dc_api_statistics
+        <where>
+            consume_time!=0
+            <if test="apiId">
+                AND api_id = #{apiId}
+            </if>
+            <if test="userId">
+                AND user_id = #{userId}
+            </if>
+        </where>
+        GROUP BY consume_time;
+    </select>
+
+</mapper>

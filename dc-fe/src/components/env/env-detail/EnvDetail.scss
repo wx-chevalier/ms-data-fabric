@@ -1,0 +1,77 @@
+.env-detail {
+  .spin-container {
+    text-align: center;
+  }
+  .content-container {
+    &-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      background-color: white;
+      padding: 20px 30px;
+      &-name {
+        &-val {
+          font-size: 25px;
+          color: #4a4a4a;
+          input {
+            width: 200px;
+          }
+        }
+        &-edit-btn {
+          margin-left: 20px;
+          font-size: 14px;
+          color: #13cbf7;
+          letter-spacing: 0;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+      &-desc {
+        margin-top: 10px;
+        width: 300px;
+      }
+    }
+    &-vars {
+      margin: 10px 0;
+      background-color: white;
+      &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 76px;
+        border-bottom: 1px solid #e9e9e9;
+        padding: 0 20px;
+        &-title {
+          font-size: 18px;
+          color: #4a4a4a;
+          letter-spacing: 0;
+          line-height: 24px;
+        }
+        &-btn-new-env {
+          display: none;
+          width: 100px;
+          height: 36px;
+          font-size: 16px;
+          color: #ffffff;
+          letter-spacing: 0;
+          line-height: 14px;
+        }
+      }
+      &-edit {
+        padding: 20px;
+      }
+    }
+    &-control {
+      display: flex;
+      justify-content: center;
+      button {
+        margin: 0 40px;
+      }
+      &-btn-cancel {
+      }
+      &-btn-submit {
+      }
+    }
+  }
+}

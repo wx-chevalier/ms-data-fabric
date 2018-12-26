@@ -1,0 +1,15 @@
+.api-creation-form {
+  &-err {
+    margin-top: 20px;
+    height: 20px;
+    text-align: center;
+    color: red;
+  }
+  .api-creation-form-btn-group {
+    display: flex;
+    justify-content: center;
+    button {
+      margin-left: 15px;
+    }
+  }
+}

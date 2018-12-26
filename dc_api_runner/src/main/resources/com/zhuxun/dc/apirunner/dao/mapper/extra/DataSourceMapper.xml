@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhuxun.dc.apirunner.dao.mapper.extra.DataSourceMapper">
+    <!--查找API实例-->
+    <select id="selectDataSourceByName" resultType="com.zhuxun.dc.apirunner.entity.vo.datasource.VDataSource">
+        SELECT
+        id, data_source_name AS name
+        FROM dc_data_source
+        WHERE data_source_name=#{dsName};
+    </select>
+    <delete id="deleteDataSourceByName">
+        DELETE FROM dc_data_source WHERE data_source_name=#{dsName};
+    </delete>
+    <delete id="deleteSchemaByDatasourceId">
+        DELETE FROM dc_data_schema WHERE data_source_id=#{dsId};
+    </delete>
+    <delete id="deleteTableByDatasourceId">
+        DELETE FROM dc_data_table WHERE data_source_id=#{dsId};
+    </delete>
+    <delete id="deleteColumnByDatasourceId">
+        DELETE FROM dc_data_column WHERE data_source_id=#{dsId};
+    </delete>
+</mapper>

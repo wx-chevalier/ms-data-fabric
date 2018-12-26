@@ -1,0 +1,27 @@
+.condition-editor {
+  height: 100%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+
+  &-operator {
+    width: 72px;
+    margin-right: 8px;
+  }
+
+  &-right-value {
+    width: 88px;
+    margin-right: 8px;
+  }
+
+  &-buttons {
+    display: flex;
+
+    &-icon {
+      width: 16px;
+      height: 16px;
+      background-size: cover;
+      margin-right: 8px;
+    }
+  }
+}

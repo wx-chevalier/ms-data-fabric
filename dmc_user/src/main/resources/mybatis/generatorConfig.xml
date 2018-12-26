@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="Mysql" targetRuntime="MyBatis3">
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.FluentBuilderMethodsPlugin"/>
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+            <property name="suppressDate" value="true"/>
+            <property name="javaFileEncoding" value="utf-8"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="${jdbc_driver_class}"
+                        connectionURL="${jdbc_url}"
+                        userId="${jdbc_user}"
+                        password="${jdbc_password}"/>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator
+                targetPackage="${target_package}.model"
+                targetProject="${src_java}">
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <sqlMapGenerator
+                targetPackage="${target_package}.mapper"
+                targetProject="${src_resources}"/>
+        <javaClientGenerator
+                targetPackage="${target_package}.mapper"
+                targetProject="${src_java}"
+                type="XMLMAPPER"/>
+
+        <table tableName="sec_user"/>
+        <table tableName="sec_role"/>
+        <table tableName="sec_permission"/>
+        <table tableName="sec_userrole" domainObjectName="SecUserRole"/>
+        <table tableName="sec_userpermission" domainObjectName="SecUserPermission"/>
+        <table tableName="sec_rolepermission" domainObjectName="SecRolePermission"/>
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,51 @@
+.eu-project-detail {
+  width: 100%;
+  height: 100%;
+  .spin-container {
+    text-align: center;
+  }
+  .content-container {
+    &-info,
+    &-resource {
+      background-color: #fff;
+      margin-bottom: 24px;
+    }
+    &-resource {
+      padding: 8px 32px;
+    }
+    &-info {
+      padding: 24px 32px;
+      border: 1px solid rgb(233, 233, 233);
+      box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.349019607843137);
+      margin-bottom: 24px;
+      &-header {
+        display: flex;
+        justify-content: space-between;
+        &-name {
+          font-size: 20px;
+          font-weight: 600;
+          margin-bottom: 16px;
+        }
+      }
+      &-row {
+        padding: 8px 0;
+        font-size: 14px;
+        font-weight: 400;
+      }
+    }
+    .doc-content {
+      height: 100%;
+      background-color: white;
+      &-title {
+        text-align: center;
+      }
+      &-info {
+        display: flex;
+        justify-content: space-around;
+        font-size: 18px;
+        color: #9c9c9c;
+        padding: 16px;
+      }
+    }
+  }
+}

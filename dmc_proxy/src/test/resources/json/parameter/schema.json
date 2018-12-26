@@ -1,0 +1,15 @@
+[
+  {
+    "in": "query",
+    "name": "key1",
+    "description": "测试参数1",
+    "required":false
+  },
+  {
+    "in": "query",
+    "name": "key2",
+    "description": "测试参数2",
+    "required":true,
+    "allowEmptyValue":true
+  }
+]

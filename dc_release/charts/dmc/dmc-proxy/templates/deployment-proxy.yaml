@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "dmc-proxy.fullname" . }}
+  labels:
+    app: {{ template "dmc-proxy.name" . }}
+    chart: {{ template "dmc-proxy.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "dmc-proxy.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "dmc-proxy.name" . }}
+        chart: {{ template "dmc-proxy.chart" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: application-config
+          configMap:
+            name: {{ template "dmc-proxy.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ template "dmc-proxy.port" . }}
+              protocol: TCP
+          command: ["/bin/sh"]
+          args:
+            - {{ template "dmc-proxy.config-path" . }}/launch.sh
+          volumeMounts:
+            - name: application-config
+              mountPath: {{ template "dmc-proxy.config-path" . }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

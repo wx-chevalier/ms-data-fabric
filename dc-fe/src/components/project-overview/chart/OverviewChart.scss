@@ -1,0 +1,67 @@
+.overview-chart {
+  display: flex;
+  flex-direction: column;
+
+  padding: 0 50px 16px 50px;
+
+  > .top {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+  }
+
+  &-info {
+    .label {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .number {
+      font-family: HelveticaNeue;
+      font-size: 26px;
+      color: rgba(0, 0, 0, 0.7);
+
+      margin-right: 32px;
+    }
+
+    .indicator {
+      position: relative;
+      top: -5px;
+      margin: 0 5px;
+
+      display: inline-block;
+
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 8px solid #4ca74f;
+    }
+
+    .compare {
+      font-size: 10px;
+      color: rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  &-toggle {
+    width: 450px;
+
+    .ant-calendar-picker-input {
+      text-align: left;
+    }
+
+    .date {
+      text-align: right;
+      margin-bottom: 16px;
+
+      > span:not(:last-child) {
+        margin-right: 16px;
+        font-size: 14px;
+      }
+    }
+
+    .project {
+      text-align: right;
+    }
+  }
+}

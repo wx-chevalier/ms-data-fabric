@@ -1,0 +1,17 @@
+{
+
+  "nullable":false,
+  "type":"object",
+  "properties":{
+    "i":{
+      "nullable":false,
+      "type":"integer"
+    },
+    "f":{
+      "nullable":false,
+      "type":"number"
+    }
+  }
+
+
+}

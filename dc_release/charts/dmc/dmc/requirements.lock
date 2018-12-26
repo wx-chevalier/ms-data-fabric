@@ -1,0 +1,24 @@
+dependencies:
+- name: dmc-ui
+  repository: file://../dmc-ui
+  version: 0.1.0
+- name: dmc-apim
+  repository: file://../dmc-apim
+  version: 0.1.0
+- name: dmc-user
+  repository: file://../dmc-user
+  version: 0.1.0
+- name: dmc-proxy
+  repository: file://../dmc-proxy
+  version: 0.1.0
+- name: dmc-api-runner
+  repository: file://../dmc-api-runner
+  version: 0.1.0
+- name: mysql
+  repository: file://../../common/mysql
+  version: 0.6.0
+- name: presto
+  repository: file://../../common/presto
+  version: "0.2"
+digest: sha256:0309113ee0abca81fa541774fa64a72a794c2a8268e4bb93abd64194b8a1ee57
+generated: 2018-07-25T09:32:03.253916663+08:00
