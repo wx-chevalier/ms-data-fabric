@@ -25,3 +25,7 @@ Data Fabric 是多层次的可视化接口生成与业务逻辑编排系统，�
 ## 构建决策流程
 
 ## 构建算法模型
+
+# Motivation & Credits
+
+- https://github.com/apache/incubator-openwhisk-runtime-nodejs
