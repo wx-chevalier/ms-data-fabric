@@ -7,9 +7,9 @@ if (process.env.NODE_ENV !== 'development') {
   APIM_HOST = 'APIM_API_DEPLOY_ADDR';
   APICR_HOST = 'APIM_API_DEPLOY_ADDR';
 } else {
-  USER_HOST = 'http://dev.dmc.truelore.cn/user';
-  APIM_HOST = 'http://dev.dmc.truelore.cn/apim';
-  APICR_HOST = 'http://dev.dmc.truelore.cn/apim';
+  USER_HOST = 'http://dmc.truelore.cn:82/user';
+  APIM_HOST = 'http://dmc.truelore.cn:82/apim';
+  APICR_HOST = 'http://dmc.truelore.cn:82/apim';
 }
 
 // USER_HOST='http://221.226.86.39/dmc/user'
