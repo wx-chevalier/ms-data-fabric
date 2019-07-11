@@ -19,7 +19,7 @@
     "echarts": "^4.1.0",
     "jsonwebtoken": "^8.2.1",
     "lodash": "^4.17.10",
-    "lodash-es": "^4.17.10",
+    "lodash-es": "^4.17.14",
     "mobx": "^4.2.1",
     "mobx-react": "^5.1.2",
     "mobx-react-router": "^4.0.3",
