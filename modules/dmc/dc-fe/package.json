@@ -18,7 +18,7 @@
     "clipboard": "^2.0.1",
     "echarts": "^4.1.0",
     "jsonwebtoken": "^8.2.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.13",
     "lodash-es": "^4.17.10",
     "mobx": "^4.2.1",
     "mobx-react": "^5.1.2",
