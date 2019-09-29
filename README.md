@@ -26,6 +26,10 @@ Data Fabric 是多层次的可视化接口生成与业务逻辑编排系统，�
 
 ## 构建算法模型
 
-# Motivation & Credits
+# About
 
-- https://github.com/apache/incubator-openwhisk-runtime-nodejs
+## Motivation & Credits
+
+- [OpenWhisk #Project#](https://github.com/apache/incubator-openwhisk-runtime-nodejs): Apache OpenWhisk Runtime NodeJS supports Apache OpenWhisk functions written in JavaScript for NodeJS
+
+- [Cube.js](https://cube.dev/): A complete open source analytics solution: visualization agnostic frontend SDKs and API backed by analytical server infrastructure.
